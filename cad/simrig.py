@@ -146,15 +146,39 @@ def shoe_parts(prefix, sx0, sx1, holes_x, top_y0, col):
     out.append((f"{prefix}_top", box(sx0, sx1, top_y0, RAIL_YC + 15, FIN_Z1, FIN_Z1 + PLATE), col,
                 f"Лист 8 мм {L:.0f}x{RAIL_YC + 15 - top_y0:.0f}", "steel"))
     out.append((f"{prefix}_cheek", cut_all(box(sx0, sx1, cy1 - PLATE, cy1, Z_RAIL_TOP + 5, FIN_Z1), holes), col,
-                f"Лист 8 мм {L:.0f}x45, {len(holes_x)} отв. Ø13 (приварная щека)", "steel"))
-    out.append((f"{prefix}_clamp", cut_all(box(sx0, sx1, cl0, cl0 + PLATE, Z_RAIL_TOP + 7, FIN_Z1 - 2), holes),
-                C_PLATE, f"Лист 8 мм {L:.0f}x41, {len(holes_x)} отв. Ø13 (съёмная прижимная)", "steel"))
+                f"Лист 8 мм {L:.0f}x45, {len(holes_x)} отв. Ø13 (приварная щека = та же деталь, что прижимная)", "steel"))
+    out.append((f"{prefix}_clamp", cut_all(box(sx0, sx1, cl0, cl0 + PLATE, Z_RAIL_TOP + 5, FIN_Z1), holes),
+                C_PLATE, f"Лист 8 мм {L:.0f}x45, {len(holes_x)} отв. Ø13 (съёмная прижимная = та же деталь, что щека)", "steel"))
     for i, x in enumerate(holes_x):
         out.append((f"{prefix}_bolt_{i+1}", bolt_y(x, FIN_HOLE_Z, cy1 - PLATE, cl0 + PLATE + 16.5, -1), C_BOLT,
-                    "Болт М12x40 8.8 + шайба", "fastener"))
+                    "Болт М12x45 8.8 + шайба", "fastener"))
         out.append((f"{prefix}_nut_{i+1}", nut_y(x, FIN_HOLE_Z, cl0 + PLATE, +1), C_BOLT,
                     "Гайка ISO 7042 М12 + шайба 300HV", "fastener"))
     return out
+
+
+def plate_yz(pts, x0, x1):
+    """Пластина с контуром pts=[(y,z)...] между x0 и x1."""
+    x0, x1 = sorted((x0, x1))
+    pl = cq.Plane(origin=(x0, 0, 0), xDir=(0, 1, 0), normal=(1, 0, 0))
+    return cq.Workplane(pl).polyline(pts).close().extrude(x1 - x0).val()
+
+
+def along_z_bolt(x, y, z_head_face, z_end):
+    """Болт вдоль Z головкой вверх: опорная поверхность z_head_face, конец z_end (ниже)."""
+    b = bolt_y(0, 0, 0, z_head_face - z_end, -1)          # вдоль Y: головка в −Y, стержень в +Y
+    return b.rotate(V(0, 0, 0), V(1, 0, 0), -90).translate(V(x, y, z_head_face))
+
+
+def along_z_nut(x, y, z_face):
+    n = nut_y(0, 0, 0, +1)
+    return n.rotate(V(0, 0, 0), V(1, 0, 0), -90).translate(V(x, y, z_face))
+
+
+def along_x(shape_y, xc_y_z):
+    """Перевести деталь, построенную вдоль Y в начале координат (ось Y через (0,0)), на ось X через точку."""
+    x, y, z = xc_y_z
+    return shape_y.rotate(V(0, 0, 0), V(0, 0, 1), -90).translate(V(x, y, z))
 
 
 # ===================================================================== реестр деталей
@@ -197,6 +221,7 @@ C_PLATE = (0.55, 0.57, 0.60)
 C_BOLT = (0.85, 0.80, 0.20)
 C_LINER = (0.95, 0.95, 0.90)
 C_REF = (0.70, 0.70, 0.75)
+C_PLASTIC = (0.10, 0.10, 0.10)
 
 # ===================================================================== основание
 
@@ -209,10 +234,10 @@ def build_base(m: Model):
     for side, sgn in (("R", 1), ("L", -1)):
         for k, xe in enumerate((-3.0, BASE_L)):
             m.add(f"base_cap_{side}{k+1}", box(xe, xe + 3, sgn * (RAIL_YC - 20), sgn * (RAIL_YC + 20), Z_BASE, Z_BASE + TUBE),
-                  C_BASE, "base", "Заглушка-пластина 3 мм 40x40 (вварная)")
+                  C_PLASTIC, "base", "Заглушка пластиковая 40x40 (вставная)", kind="purchased")
     yi = RAIL_YC - TUBE / 2   # 250
     for i, xc in enumerate(CROSS_X):
-        t = 3.0 if xc == POST_X else 2.0
+        t = 3.0          # все поперечины одинаковые — мастер не перепутает 2 и 3 мм
         m.add(f"base_cross_{i+1}", tube("Y", -yi, yi, (xc, zc), TUBE, TUBE, t),
               C_BASE, "base", f"Труба 40x40x{t:g}, L={2*yi:.0f}")
     # гребни-гребёнки (полоса 50x8 на ребро) с отверстиями шагом 25
@@ -224,7 +249,7 @@ def build_base(m: Model):
         fin = box(x0, x1, RAIL_YC - FIN_T / 2, RAIL_YC + FIN_T / 2, FIN_Z0, FIN_Z1)
         fin = cut_all(fin, [cyl("Y", (x, FIN_HOLE_Z), 200, 340, HOLE) for x in holes])
         m.add_lr(f"fin_{zone}", fin, C_BASE, "base",
-                 f"Полоса 50x8, L={x1-x0:.0f}, {len(holes)} отв. Ø13 шаг 25")
+                 f"Лист 8 мм (лазер), гребень 50x{x1-x0:.0f}, {len(holes)} отв. Ø13 шаг 25")
     # площадки и регулируемые опоры
     for i, xf in enumerate(FOOT_X):
         x0 = min(max(xf - 30, 0.0), BASE_L - 60)
@@ -258,22 +283,17 @@ def outer_post_parts():
                   (x1, gz), (x0, gz), (x0, Z_RAIL_TOP + 75), (gx0, Z_RAIL_TOP)], y1, y1 + PLATE)
     g = cut_all(g, holes)
     out.append(("tower_gusset_outer", g, C_PLATE, "Лист 8 мм, косынка-накладка, 10 отв. Ø13"))
-    # внутренняя накладка — полоса 50x8 (тот же сортамент, что гребни) с приварными гайками DIN 929 М12
-    dz0, dz1 = OUTER_ROW_Z[0] - 14, OUTER_ROW_Z[-1] + 36
-    dbl = cut_all(box(POST_X - 25, POST_X + 25, y0 - PLATE, y0, dz0, dz1), holes)
-    out.append(("tower_doubler_inner", dbl, C_PLATE, "Полоса 50x8, L=%.0f, 10 отв. Ø13" % (dz1 - dz0)))
-    for i, z in enumerate(OUTER_ROW_Z):
-        out.append((f"tower_weldnut_{i+1:02d}", weld_nut_y(POST_X, z, y0 - PLATE, -1), C_BOLT,
-                    "Гайка приварная DIN 929 М12"))
+    # внутренняя накладка не нужна: внутренняя стойка сплошная — пакет под болтом не сминается
     # стальные калиброванные вкладыши по граням Y (в пакете под болтом)
     for nm, (ya, yb) in (("in", (y0 + T_OUTER, y0 + T_OUTER + LINER)),
                          ("out", (y1 - T_OUTER - LINER, y1 - T_OUTER))):
         ln = box(POST_X - 18, POST_X + 18, ya, yb, Z_RAIL_TOP + 50, OUTER_TOP)
-        lip_y = (y0, ya) if nm == "in" else (yb, y1)
-        ln = ln.fuse(box(POST_X - 18, POST_X + 18, lip_y[0], lip_y[1], OUTER_TOP, OUTER_TOP + 2))
+        # Т-образная головка (лазер, без гибки) лежит на торцах граней X — вкладыш не проваливается
+        ln = ln.fuse(box(POST_X - 30, POST_X + 30, ya, yb, OUTER_TOP, OUTER_TOP + 8))
         ln = cut_all(ln, holes)
         out.append((f"tower_liner_steel_{nm}", ln, C_LINER,
-                    "Вкладыш сталь 2 мм (подбор 1.6–2.2), с отгибом, 10 отв."))
+                    "Лист 2 мм (лазер), вкладыш Т-образный 36/60x%.0f, 10 отв. Ø13; подбор толщины 1.5/2.0/2.5"
+                    % (OUTER_TOP + 8 - Z_RAIL_TOP - 50)))
     return out
 
 
@@ -287,11 +307,16 @@ def build_tower(m: Model):
     L = math.hypot(xb - xa, za - zb) + 200
     ang = math.degrees(math.atan2(za - zb, xb - xa))
     raw = box(-100, L - 100, -20, 20, -20, 20)
-    raw = raw.cut(box(-101, L, -17, 17, -17, 17))
+    raw = raw.cut(box(-101, L, -17, 17, -17, 17))   # 40x40x3
     raw = raw.rotate(V(0, 0, 0), V(0, 1, 0), ang).translate(V(xa, RAIL_YC, za))
     br = raw.intersect(box(xa, 2000, 0, 400, zb, 2000))
     m.add_lr("tower_brace", br, C_TOWER, "tower_fixed",
-             "Труба 40x40x2, подкос, L≈%.0f по оси" % math.hypot(xb - xa, za - zb))
+             "Труба 40x40x3, подкос, L≈%.0f по оси" % math.hypot(xb - xa, za - zb))
+    # внутренняя косынка стойки на поперечину основания (поперечная жёсткость узла стойка–основание)
+    gi = plate_yz([(POST_YC - OUTER / 2, Z_RAIL_TOP), (POST_YC - OUTER / 2, Z_RAIL_TOP + 50),
+                   (POST_YC - OUTER / 2 - 100, Z_RAIL_TOP)], POST_X - PLATE / 2, POST_X + PLATE / 2)
+    m.add_lr("tower_gusset_inner", gi, C_PLATE, "tower_fixed",
+             "Лист 8 мм (лазер), косынка 100x50 (ниже гаек нижнего положения)")
     m.notes["brace"] = (xa, za, xb, zb)
 
 
@@ -306,24 +331,22 @@ def build_height_unit(m: Model):
     for z in zh:
         assert any(abs(z - r) < 1e-6 for r in OUTER_ROW_Z), (z, "нет совпадения с рядом наружной стойки")
     y0, y1 = POST_YC - INNER / 2, POST_YC + INNER / 2   # 245..285
-    ip = tube("Z", bot, top, (POST_X, POST_YC), INNER, INNER, T_INNER)
-    ip = cut_all(ip, [cyl("Y", (POST_X, z), y0 - 1, y1 + 1, 17.2) for z in zh])
+    ip = box(POST_X - INNER / 2, POST_X + INNER / 2, y0, y1, bot, top)
+    ip = cut_all(ip, [cyl("Y", (POST_X, z), y0 - 1, y1 + 1, HOLE) for z in zh])
     m.add_lr("height_inner_post", ip, C_INNER, "height",
-             "Труба 40x40x3, L=%.0f, 2 отв. Ø17.2 (разнос 75)" % INNER_L)
+             "Квадрат сплошной 40x40, L=%.0f, 2 отв. Ø13 (разнос 75) — сверлить по месту через стойку" % INNER_L)
+    # фиксирующие болты М12 (2 на стойку), головка снаружи, гайка ISO 7042 внутри
     for i, z in enumerate(zh):
-        sl = cyl("Y", (POST_X, z), y0, y1, 17.0).cut(cyl("Y", (POST_X, z), y0 - 1, y1 + 1, 13.0))
-        m.add_lr(f"height_sleeve_{i+1}", sl, C_INNER, "height", "Втулка распорная, труба 17x2, L=40, вварная")
-    # фиксирующие болты М12 (2 на стойку), головка снаружи, ввинчиваются в приварные гайки
-    for i, z in enumerate(zh):
-        b = bolt_y(POST_X, z, POST_YC + OUTER / 2 + PLATE, POST_YC - OUTER / 2 - PLATE - 12, +1)
-        m.add_lr(f"height_bolt_{i+1}", b, C_BOLT, "height", "Болт М12x80 8.8 + Nord-Lock",
-                 kind="fastener")
+        b = bolt_y(POST_X, z, POST_YC + OUTER / 2 + PLATE, POST_YC - OUTER / 2 - 17.5, +1)
+        m.add_lr(f"height_bolt_{i+1}", b, C_BOLT, "height", "Болт М12x90 8.8 + шайба", kind="fastener")
+        m.add_lr(f"height_nut_{i+1}", nut_y(POST_X, z, POST_YC - OUTER / 2, -1), C_BOLT, "height",
+                 "Гайка ISO 7042 М12 + шайба DIN 9021", kind="fastener")
     # верхняя поперечина 40x40x3 на торцах внутренних стоек
     m.add("height_head_cross", tube("Y", -(POST_YC + 20), POST_YC + 20, (POST_X, top + 20), TUBE, TUBE, 3.0),
           C_INNER, "height", "Труба 40x40x3, L=570")
     for k, ye in enumerate((-(POST_YC + 23), POST_YC + 20)):
-        m.add(f"height_head_cap_{k+1}", box(POST_X - 20, POST_X + 20, ye, ye + 3, top, top + 40), C_INNER, "height",
-              "Заглушка 3 мм 40x40")
+        m.add(f"height_head_cap_{k+1}", box(POST_X - 20, POST_X + 20, ye, ye + 3, top, top + 40), C_PLASTIC, "height",
+              "Заглушка пластиковая 40x40", kind="purchased")
     # сёдла-вилки продольной регулировки
     zc_hole = H - DECK_T - DECK_FIN_H / 2      # H-33
     ycf = DECK_FIN_Y
@@ -337,15 +360,10 @@ def build_height_unit(m: Model):
     cheek = cut_all(cheek, holes)
     m.add_lr("saddle_cheek_welded", cheek, C_INNER, "height",
              "Лист 8 мм %.0fx%.0f, вырез под поперечину, 2 отв. Ø13" % (SADDLE_L, H - 11 - top))
-    m.add_lr("saddle_bed", box(sx0, sx1, fy0, cy0, top + 40, top + 50), C_INNER, "height",
-             "Полоса 10x8 (опора гребня), L=%.0f" % SADDLE_L)
     ly0, ly1 = fy0 - GAP - PLATE, fy0 - GAP
     lp = cut_all(box(sx0, sx1, ly0, ly1, top + 40, H - 11), holes)
     m.add_lr("saddle_clamp_plate", lp, C_PLATE, "height",
              "Лист 8 мм %.0fx%.0f, 2 отв. Ø13, съёмная прижимная" % (SADDLE_L, H - 51 - top))
-    for i, x in enumerate(hx):
-        m.add_lr(f"saddle_weldnut_{i+1}", weld_nut_y(x, zc_hole, cy1, +1), C_BOLT, "height",
-                 "Гайка приварная DIN 929 М12", kind="fastener")
     m.notes["saddle_holes_x"] = hx
     m.notes["saddle_ly0"] = ly0
     m.notes["saddle_cy1"] = cy1
@@ -370,14 +388,33 @@ def build_deck(m: Model):
     for h in active:
         xs = POST_X + h
         assert any(abs(xs - (x + d)) < 1e-6 for x in fin_holes), ("нет совпадения", xs, d)
-    m.add_lr("deck_fin", fin, C_DECK, "deck", "Полоса 50x8, L=%.0f, %d отв. Ø13 шаг 25" % (DECK_D, len(fin_holes)))
+    m.add_lr("deck_fin", fin, C_DECK, "deck", "Лист 8 мм (лазер), гребень 50x%.0f, %d отв. Ø13 шаг 25" % (DECK_D, len(fin_holes)))
+    fm_holes = [(x0 + 68, y) for y in (-120.0, -60.0, 60.0, 120.0)]
     plate = box(x0, x1, -DECK_W / 2, DECK_W / 2, H - DECK_T, H)
+    plate = cut_all(plate, [cyl("Z", (x, y), H - 20, H + 20, HOLE) for (x, y) in fm_holes])
     m.add("deck_plate", plate, C_DECK, "deck",
-          "Лист 8 мм %.0fx%.0f (отверстия под базу — после выбора базы)" % (DECK_W, DECK_D))
+          "Лист 8 мм %.0fx%.0f, 4 отв. Ø13 под фронтальный кронштейн (отверстия под базу — после выбора базы)"
+          % (DECK_W, DECK_D))
+    if m.cfg.front_mount:
+        fl = cut_all(box(x0 + 20, x0 + 116, -150, 150, H, H + PLATE),
+                     [cyl("Z", (x, y), H - 5, H + 20, HOLE) for (x, y) in fm_holes])
+        m.add("deck_fm_flange", fl, C_DECK, "deck", "Лист 8 мм (лазер) 96x300, 4 отв. Ø13 — основание фронтального кронштейна")
+        m.add("deck_fm_plate", box(x0 + 20, x0 + 28, -150, 150, H + PLATE, H + 230), C_DECK, "deck",
+              "Лист 8 мм (лазер) 300x222 — фронтальная плита (отверстия под базу — после выбора базы)")
+        for y in (-146.0, 138.0):
+            g = plate_xz([(x0 + 28, H + PLATE), (x0 + 116, H + PLATE), (x0 + 28, H + 160)], y, y + PLATE)
+            m.add(f"deck_fm_gusset_{'L' if y < 0 else 'R'}", g, C_DECK, "deck", "Лист 8 мм (лазер), косынка 88x152")
+        for i, (x, y) in enumerate(fm_holes):
+            b = along_z_bolt(x, y, H + PLATE, H - DECK_T - 17.5)
+            m.add(f"deck_fm_bolt_{i+1}", b, C_BOLT, "deck", "Болт М12x45 8.8 + шайба", kind="fastener")
+            m.add(f"deck_fm_nut_{i+1}", along_z_nut(x, y, H - DECK_T), C_BOLT, "deck", "Гайка ISO 7042 М12 + шайба",
+                  kind="fastener")
     for i, h in enumerate(active):
         xs = POST_X + h
-        b = bolt_y(xs, zc_hole, m.notes["saddle_ly0"], m.notes["saddle_cy1"] + 10 + 1.5, -1)
-        m.add_lr(f"deck_bolt_{i+1}", b, C_BOLT, "deck", "Болт М12x40 8.8 + Nord-Lock", kind="fastener")
+        b = bolt_y(xs, zc_hole, m.notes["saddle_ly0"], m.notes["saddle_cy1"] + 17.5, -1)
+        m.add_lr(f"deck_bolt_{i+1}", b, C_BOLT, "deck", "Болт М12x45 8.8 + шайба", kind="fastener")
+        m.add_lr(f"deck_nut_{i+1}", nut_y(xs, zc_hole, m.notes["saddle_cy1"], +1), C_BOLT, "deck",
+                 "Гайка ISO 7042 М12 + шайба", kind="fastener")
 
 
 # ===================================================================== педальный узел
@@ -406,7 +443,7 @@ def pedal_carriage_parts(xp, alpha):
     act = [P] + [(P[0] - R * math.cos(ar), P[1] + R * math.sin(ar)) for R in PEDAL_R]
     for i, (x, z) in enumerate(act):
         b = bolt_y(x, z, UPRIGHT_Y0 + 8, UPRIGHT_Y0 - 1 - 8 - 14.5 - 2, +1)
-        out.append((f"pedal_pivot_bolt_{i+1}", b, C_BOLT, "Болт М12x40 8.8 + шайба", "fastener"))
+        out.append((f"pedal_pivot_bolt_{i+1}", b, C_BOLT, "Болт М12x45 8.8 + шайба", "fastener"))
     return out
 
 
@@ -419,18 +456,18 @@ def build_pedals(m: Model):
     fl_y0 = fl_y1 - 8                 # 222
     parts = []
     plate = box(-25, -25 + TRAY_L, -TRAY_W / 2, TRAY_W / 2, -25 - TRAY_T, -25)
-    parts.append(("pedal_tray_plate", plate, "Лист 6 мм 460x330 (отв. под педали — по месту)"))
+    parts.append(("pedal_tray_plate", plate, "Лист 8 мм 460x330 (отв. под педали — по месту)"))
     for sgn, side in ((1, "R"), (-1, "L")):
         fl = box(-25, -25 + TRAY_L, sgn * fl_y0, sgn * fl_y1, -25, 25)
         fl = cut_all(fl, [cyl("Y", (u, 0), -300, 300, HOLE) for u in (0.0,) + PEDAL_R])
-        parts.append((f"pedal_tray_flange_{side}", fl, "Полоса 50x8, L=330, %d отв. Ø13" % (1 + len(PEDAL_R))))
+        parts.append((f"pedal_tray_flange_{side}", fl, "Лист 8 мм (лазер), фланец 50x330, %d отв. Ø13" % (1 + len(PEDAL_R))))
         for j, u in enumerate((0.0,) + PEDAL_R):
             yf = sgn * fl_y0
             nut = nut_y(u, 0, yf, -sgn)
             parts.append((f"pedal_tray_nut_{side}{j+1}", nut, "Гайка ISO 7042 М12 + шайба 300HV"))
     for j, u in enumerate((80.0, 180.0)):
-        st = tube("Y", -fl_y0, fl_y0, (u + 10, -5.0), 20, 40, 2.0)   # под листом, на ребро
-        parts.append((f"pedal_tray_stiffener_{j+1}", st, "Труба 40x20x2 (на ребро), L=444"))
+        st = tube("Y", -fl_y0, fl_y0, (u + 20, -5.0), 40, 40, 3.0)   # под листом (та же труба 40x40x3)
+        parts.append((f"pedal_tray_stiffener_{j+1}", st, "Труба 40x40x3, L=444"))
     rot = alpha - 180.0
     for name, s, spec in parts:
         # локальная −Z (низ листа) после поворота смотрит вверх-назад, к пилоту
@@ -455,16 +492,87 @@ def build_seat(m: Model):
         for name, s, col, spec, kind in parts:
             m.add_lr(name, s, col, "seat", spec, kind=kind)
         zt = FIN_Z1 + 8
-        m.add(f"seat_crossbar_{k+1}", tube("Y", -285, 285, (xc, zt + 20), 40, 40, 3.0), C_SEAT, "seat",
-              "Труба 40x40x3, L=570")
-        m.add(f"seat_crossbar_flange_{k+1}", box(xc - 40, xc + 40, -270, 270, zt + 40, zt + 46), C_SEAT, "seat",
-              "Полоса 80x6, L=540 (полка: сверловка под салазки по месту)")
-    zt = FIN_Z1 + 8 + 46       # 189
+        m.add(f"seat_crossbar_{k+1}", tube("Y", -285, 285, (xc, zt + 25), 50, 50, 3.0), C_SEAT, "seat",
+              "Труба 50x50x3, L=570 (жёсткая на кручение — держит кронштейн ручника)")
+        m.add(f"seat_crossbar_flange_{k+1}", box(xc - 40, xc + 40, -262, 262, zt + 50, zt + 58), C_SEAT, "seat",
+              "Лист 8 мм (лазер) 80x524 — полка поперечины (сверловка под салазки по месту)")
+    zt = FIN_Z1 + 8 + 58       # 201
     x0, x1 = m.cfg.xc1 - 60, m.cfg.xc2 + 60
     for sgn, side in ((1, "R"), (-1, "L")):
         m.add(f"seat_adapter_bar_{side}", box(x0, x1, sgn * 165, sgn * 215, zt, zt + 8), C_PLATE, "seat",
-              "Полоса 50x8 — адаптер под салазки (отверстия по месту)")
+              "Лист 8 мм (лазер) 50x%.0f — адаптер под салазки (отверстия по месту)" % (x1 - x0))
     m.notes["seat_mount_z"] = zt + 8
+
+
+# ===================================================================== кронштейн шифтера / ручника
+
+
+def build_side_mount(m: Model):
+    """Съёмный боковой кронштейн на торце передней поперечины сиденья (едет вместе с сиденьем).
+    Фланцы под него приварены на ОБОИХ торцах поперечины — ставится справа или слева."""
+    xc = m.cfg.xc1
+    zt = FIN_Z1 + PLATE                       # низ поперечины, 143
+    fz0, fz1 = zt, zt + 72                    # фланец по высоте 143…215
+    fl_holes_xz = [(xc + dx, z) for dx in (-38, 38) for z in (158.0, 200.0)]
+    # фланцы на торцах поперечины (оба торца — часть узла сиденья)
+    for sgn, nm in ((1, "R"), (-1, "L")):
+        f = box(xc - 50, xc + 50, 285, 293, fz0, fz1)
+        f = cut_all(f, [cyl("Y", (x, z), 270, 310, HOLE) for (x, z) in fl_holes_xz])
+        m.add(f"seat_end_flange_{nm}", f if sgn > 0 else mirror_y(f), C_SEAT, "seat",
+              "Лист 8 мм (лазер) 100x72, 4 отв. Ø13 — фланец под боковой кронштейн")
+    if m.cfg.side == 0:
+        return
+    parts = []
+    # ответный фланец + консоль 40x40x3 + стакан 50x50x3 + косынка
+    f2 = cut_all(box(xc - 50, xc + 50, 293, 301, fz0, fz1),
+                 [cyl("Y", (x, z), 270, 320, HOLE) for (x, z) in fl_holes_xz])
+    parts.append(("side_flange", f2, C_SEAT, "Лист 8 мм (лазер) 100x72, 4 отв. Ø13", "steel"))
+    za = 170.0
+    parts.append(("side_arm", tube("Y", SIDE_ARM_Y[0], SIDE_ARM_Y[1], (xc, za), 40, 40, 3.0), C_SEAT,
+                  "Труба 40x40x3, L=%.0f" % (SIDE_ARM_Y[1] - SIDE_ARM_Y[0]), "steel"))
+    cy0, cy1 = SIDE_CUP_YC - 25, SIDE_CUP_YC + 25
+    cup = tube("Z", SIDE_CUP_Z[0], SIDE_CUP_Z[1], (xc, SIDE_CUP_YC), 50, 50, 3.0)
+    holes = [cyl("X", (SIDE_CUP_YC, z), xc - 40, xc + 40, HOLE) for z in SIDE_CUP_ROW]
+    cup = cut_all(cup, holes)
+    parts.append(("side_cup", cup, C_SEAT, "Труба 50x50x3, L=%.0f, 8 отв. Ø13 шаг 25 (труборез)"
+                  % (SIDE_CUP_Z[1] - SIDE_CUP_Z[0]), "steel"))
+    g = plate_yz([(SIDE_ARM_Y[0] + 20, za - 20), (cy0, za - 20), (cy0, za - 95)], xc - 4, xc + 4)
+    parts.append(("side_gusset", g, C_SEAT, "Лист 8 мм (лазер), косынка", "steel"))
+    # калиброванные вкладыши по граням X (в пакете под болтом), Т-головка на торце стакана
+    for nm, (xa, xb) in (("front", (xc - 22, xc - 20)), ("rear", (xc + 20, xc + 22))):
+        ln = box(xa, xb, SIDE_CUP_YC - 18, SIDE_CUP_YC + 18, SIDE_CUP_ROW[0] - 30, SIDE_CUP_Z[1])
+        ln = ln.fuse(box(xa, xb, SIDE_CUP_YC - 30, SIDE_CUP_YC + 30, SIDE_CUP_Z[1], SIDE_CUP_Z[1] + 8))
+        parts.append((f"side_liner_{nm}", cut_all(ln, holes), C_LINER,
+                      "Лист 2 мм (лазер), вкладыш Т-образный, 8 отв. Ø13", "liner"))
+    zp = m.cfg.zp
+    zh = [zp - h for h in SIDE_BAR_HOLES]
+    for z in zh:
+        assert any(abs(z - r) < 1e-6 for r in SIDE_CUP_ROW), ("кронштейн: нет совпадения отверстий", z)
+    bar = box(xc - 20, xc + 20, SIDE_CUP_YC - 20, SIDE_CUP_YC + 20, zp - SIDE_BAR_L, zp)
+    bar = cut_all(bar, [cyl("X", (SIDE_CUP_YC, z), xc - 30, xc + 30, HOLE) for z in zh])
+    parts.append(("side_bar", bar, C_INNER, "Квадрат сплошной 40x40, L=%.0f, 2 отв. Ø13 (разнос 75)" % SIDE_BAR_L,
+                  "steel"))
+    px, py = SIDE_PLATE
+    plat = box(xc - px / 2 - 70, xc + px / 2 - 70, SIDE_CUP_YC - py / 2, SIDE_CUP_YC + py / 2, zp, zp + PLATE)
+    parts.append(("side_platform", plat, C_SEAT,
+                  "Лист 8 мм %.0fx%.0f — платформа шифтера/ручника (отверстия под устройства — по месту)" % (px, py),
+                  "steel"))
+    for i, z in enumerate(zh):
+        b = along_x(bolt_y(0, 0, 0, 25 + 17.5 + 50, -1), (xc - 25, SIDE_CUP_YC, z))
+        parts.append((f"side_bolt_{i+1}", b, C_BOLT, "Болт М12x90 8.8 + шайба", "fastener"))
+        n = along_x(nut_y(0, 0, 0, +1), (xc + 25, SIDE_CUP_YC, z))
+        parts.append((f"side_nut_{i+1}", n, C_BOLT, "Гайка ISO 7042 М12 + шайба DIN 9021", "fastener"))
+    for i, (x, z) in enumerate(fl_holes_xz):
+        parts.append((f"side_flange_bolt_{i+1}", bolt_y(x, z, 301, 285 - 15.5, +1), C_BOLT,
+                      "Болт М12x45 8.8 + шайба", "fastener"))
+        parts.append((f"side_flange_nut_{i+1}", nut_y(x, z, 285, -1), C_BOLT, "Гайка ISO 7042 М12 + шайба",
+                      "fastener"))
+    cap = box(xc - 25, xc + 25, cy0, cy1, SIDE_CUP_Z[0] - 3, SIDE_CUP_Z[0])
+    parts.append(("side_cup_cap", cap, C_PLASTIC, "Заглушка пластиковая 50x50", "purchased"))
+    for name, s_, col, spec, kind in parts:
+        if m.cfg.side < 0:
+            s_ = mirror_y(s_)
+        m.add(name, s_, col, "side", spec, kind=kind)
 
 
 # ===================================================================== условные габариты (не изготавливаются)
@@ -473,9 +581,11 @@ def build_seat(m: Model):
 def build_refs(m: Model):
     cfg = m.cfg
     H, d = cfg.H, cfg.d
-    zax = H + 70
-    xb0 = DECK_X0_NOM + d + RIM_FROM_DECK_FRONT - 320
-    base = fuse_all([cyl("X", (0, zax), xb0, xb0 + 230, 130), box(xb0, xb0 + 230, -70, 70, H, zax)])
+    zax = H + (110 if cfg.front_mount else 70)
+    xb0 = DECK_X0_NOM + d + RIM_FROM_DECK_FRONT - 320 + (18 if cfg.front_mount else 0)
+    base = cyl("X", (0, zax), xb0, xb0 + 230, 130)
+    if not cfg.front_mount:
+        base = fuse_all([base, box(xb0, xb0 + 230, -70, 70, H, zax)])
     m.add("REF_wheelbase", base, C_REF, "ref", "Условный габарит DD-базы Ø130x230", ref=True, kind="ref")
     hub = cyl("X", (0, zax), xb0 + 230, xb0 + 310, 60)
     m.add("REF_wheel_hub", hub, C_REF, "ref", "Условный быстросъём + ступица", ref=True, kind="ref")
@@ -509,6 +619,7 @@ def build_model(cfg: Config, refs=None):
     build_deck(m)
     build_pedals(m)
     build_seat(m)
+    build_side_mount(m)
     if cfg.show_refs if refs is None else refs:
         build_refs(m)
     return m

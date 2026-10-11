@@ -44,6 +44,7 @@ RIGID = dict(A=1e5, Iy=1e9, Iz=1e9, J=1e9, cy=1, cz=1)
 S40x3 = sec_rhs(40, 40, 3)
 S40x2 = sec_rhs(40, 40, 2)
 S50x3 = sec_rhs(50, 50, 3)
+SQ40 = dict(A=1600.0, Iy=40 ** 4 / 12, Iz=40 ** 4 / 12, J=0.141 * 40 ** 4, cy=20, cz=20)   # сплошной квадрат 40
 FIN = sec_flat(DECK_FIN_T, DECK_FIN_H)                    # 8 x 50 на ребро
 DECK_X = dict(A=130 * 8, Iy=130 * 8 ** 3 / 12, Iz=8 * 130 ** 3 / 12, J=130 * 8 ** 3 / 3, cy=65, cz=4)  # полоса листа 8 мм
 
@@ -137,7 +138,7 @@ def build_frame(H, d):
     for s in (1, -1):
         f.chain([(x, s * RAIL_YC, zc) for x in xs], S40x3, "лонжерон основания")
     for x in CROSS_X:
-        f.beam((x, -RAIL_YC, zc), (x, RAIL_YC, zc), S40x3 if x == POST_X else S40x2, "поперечина основания")
+        f.beam((x, -RAIL_YC, zc), (x, RAIL_YC, zc), S40x3, "поперечина основания")
     top_in = H - STACK
     zhead = top_in + 20
     zbrace = OUTER_TOP - 39
@@ -146,9 +147,9 @@ def build_frame(H, d):
         f.beam((POST_X, y, zc), (POST_X, y, Z_RAIL_TOP), RIGID, "узел стойка-лонжерон (косынка)")
         f.chain([(POST_X, y, Z_RAIL_TOP), (POST_X, y, zbrace), (POST_X, y, OUTER_TOP)], S50x3, "наружная стойка 50x50x3",
                 ref=(1, 0, 0))
-        f.beam((POST_X, y, OUTER_TOP), (POST_X, y, zhead), S40x3, "внутренняя стойка 40x40x3 (над направляющей)",
+        f.beam((POST_X, y, OUTER_TOP), (POST_X, y, zhead), SQ40, "внутренняя стойка — квадрат 40 (над направляющей)",
                ref=(1, 0, 0))
-        f.beam((POST_X, y, zbrace), (CROSS_X[2], y, zc), S40x2, "подкос 40x40x2")
+        f.beam((POST_X, y, zbrace), (CROSS_X[2], y, zc), S40x3, "подкос 40x40x3")
     ys = [-RAIL_YC, -DECK_FIN_Y, DECK_FIN_Y, RAIL_YC]
     f.chain([(POST_X, y, zhead) for y in ys], S40x3, "верхняя поперечина 40x40x3")
     zf = H - DECK_T - DECK_FIN_H / 2
@@ -161,7 +162,7 @@ def build_frame(H, d):
         for xb in xa:
             f.beam((POST_X, y, zhead), (xb, y, zf), RIGID, "седло (жёстко, затянутые болты)")
         pts = sorted(set([x0, x1] + xa + list(xmount)))
-        f.chain([(x, y, zf) for x in pts], FIN, "гребень площадки 60x10", ref=(0, 0, 1))
+        f.chain([(x, y, zf) for x in pts], FIN, "гребень площадки 50x8", ref=(0, 0, 1))
     for xm in xmount:   # лист + рёбра связывают гребни поперёк (в точках крепления базы)
         f.chain([(xm, -DECK_FIN_Y, zf), (xm, 0, zf), (xm, DECK_FIN_Y, zf)], DECK_X, "лист площадки 8 мм")
     rim = (xr, 0.0, H + 70)
@@ -239,15 +240,31 @@ def bolt_checks():
     Fs = Mp / 2 / (PEDAL_R[0] / 1000) / 1000
     out.append((f"Педали: тормоз {Fped:.0f} Н по нормали на расстоянии {arm:.0f} мм от оси → {Mp:.0f} Н·м; ось + 1 болт на дуге R{PEDAL_R[0]:.0f} на каждой щеке",
                 f"болт дуги ≈{Fs:.2f} кН, оси ≈{(Fped/2/1000 + Fs):.1f} кН (одна плоскость; запас > {Fv_Rd/(Fped/2/1000 + Fs):.0f})"))
-    st_I = (20 * 40 ** 3 - 16 * 36 ** 3) / 12
+    st_I = (40 ** 4 - 34 ** 4) / 12
     Ls = 444.0
     Pm = Fped / 2
     sig = Pm * Ls / 4 / (st_I / 20)
     dl = Pm * Ls ** 3 / (48 * E * st_I)
-    out.append(("Поперечина педальной площадки 40x20x2 на ребро, пролёт 444, 1000 Н в середине (без учёта листа)",
+    out.append(("Ребро педальной площадки 40x40x3, пролёт 444, 1000 Н в середине (без учёта листа 8 мм)",
                 f"σ ≈ {sig:.0f} МПа, прогиб ≈ {dl:.2f} мм"))
     # щеки башмаков: проверка на отрыв
     out.append(("Башмак педалей: 3 болта М12 на сторону (сквозные, гайка ISO 7042), сдвиг 2 кН/2 стороны", "≈0.33 кН на болт — трение и опора болта с запасом > 30"))
+    # боковой кронштейн: ручник 500 Н вдоль X на 150 мм выше платформы, платформа в верхнем положении
+    Fh, zr = 500.0, SIDE_ZP[-1] + 150
+    zc_cross = FIN_Z1 + PLATE + 25
+    M_cup = Fh * (zr - SIDE_CUP_Z[1]) / 1000
+    over = SIDE_CUP_Z[1] - (SIDE_ZP[-1] - SIDE_BAR_L)
+    out.append((f"Кронштейн шифтера: ручник {Fh:.0f} Н на высоте {zr:.0f} мм, плечо до верха стакана → {M_cup:.0f} Н·м; перекрытие {over:.0f} мм",
+                f"реакция направляющих ≈{M_cup/(over/1000)/1000:.2f} кН; болты М12 — срез ≈{Fh/2/1000:.2f} кН"))
+    T = Fh * (zr - zc_cross) / 1000
+    J40 = sec_rhs(50, 50, 3)["J"]
+    L = 270.0
+    th = T * 1000 * L / (G * J40)
+    out.append((f"Кручение передней поперечины сиденья от ручника: {T:.0f} Н·м на половине пролёта {L:.0f} мм",
+                f"угол ≈{math.degrees(th):.2f}° → смещение рукояти ≈{th*(zr - zc_cross):.1f} мм (+ податливость башмаков) [!] проверить замером"))
+    Mx = Fh * (zr - zc_cross) / 1000
+    out.append(("Фланец кронштейна (4 болта М12, разнос по высоте 42 мм) — боковая сила 500 Н на рукояти",
+                f"момент ≈{Mx:.0f} Н·м → растяжение ≈{Mx/0.042/2/1000:.1f} кН на болт (несущая способность М12 8.8 ≈ 48 кН)"))
     return out
 
 

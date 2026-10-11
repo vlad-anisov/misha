@@ -10,6 +10,7 @@ import sys
 import time
 
 import cadquery as cq
+import numpy as np
 from OCP.BRepAlgoAPI import BRepAlgoAPI_Common
 from OCP.BRepExtrema import BRepExtrema_DistShapeShape
 from OCP.GProp import GProp_GProps
@@ -82,6 +83,36 @@ def interference(m, vol_tol=1.0, include_refs=True):
     return hits
 
 
+def fastener_check(m):
+    """Каждая гайка должна целиком сидеть на стержне болта (болт достаточной длины и стоит в отверстиях)."""
+    import cadquery as cq
+    bolts = [p for p in m.parts if "bolt" in p.name and p.kind == "fastener"]
+    bad = []
+    n_ok = 0
+    for p in m.parts:
+        if p.kind != "fastener" or "nut" not in p.name or "weldnut" in p.name or "foot" in p.name:
+            continue
+        bb = p.shape.BoundingBox()
+        dims = [bb.xlen, bb.ylen, bb.zlen]
+        ax = int(np.argmin(dims))
+        c = [bb.center.x, bb.center.y, bb.center.z]
+        L = dims[ax] - 3.0
+        d = [0, 0, 0]; d[ax] = 1
+        o = list(c); o[ax] -= L / 2
+        probe = cq.Solid.makeCylinder(5.5, L, cq.Vector(*o), cq.Vector(*d))
+        need = probe.Volume() * 0.97
+        got = 0.0
+        for b in bolts:
+            if not bbox_overlap(bb, b.shape.BoundingBox()):
+                continue
+            got += volume(BRepAlgoAPI_Common(probe.wrapped, b.shape.wrapped).Shape())
+        if got < need:
+            bad.append(p.name)
+        else:
+            n_ok += 1
+    return n_ok, bad
+
+
 def min_distance(s1, s2):
     d = BRepExtrema_DistShapeShape(s1.wrapped, s2.wrapped)
     d.Perform()
@@ -97,7 +128,9 @@ def main(names):
         t = time.time()
         m = build_model(cfg)
         hits = interference(m)
+        n_ok, bad_nuts = fastener_check(m)
         report[n] = dict(cfg=cfg.__dict__, n_parts=len(m.parts), interference=hits,
+                         nuts_on_bolts_ok=n_ok, nuts_not_on_bolt=bad_nuts,
                          inner_hole_z=m.notes.get("inner_hole_z"))
         if n == "nominal":
             export_step(m, os.path.join(OUT, "step", "simrig_nominal_AP214.step"), "AP214IS")
@@ -107,7 +140,8 @@ def main(names):
         elif n.startswith("wheel_"):   # крайние положения руля; прочие конфигурации — только проверка
             export_step(m, os.path.join(OUT, "step", f"simrig_{n}_AP214.step"), "AP214IS")
             export_stl(m, os.path.join(OUT, "stl", f"simrig_{n}.stl"))
-        print(f"{n:22s} parts={len(m.parts):4d}  interference={hits}  ({time.time()-t:.1f}s)", flush=True)
+        print(f"{n:26s} parts={len(m.parts):4d}  interference={hits}  nuts ok={n_ok} bad={bad_nuts}  "
+              f"({time.time()-t:.1f}s)", flush=True)
     with open(os.path.join(OUT, "interference_report.json"), "w") as f:
         json.dump(report, f, ensure_ascii=False, indent=1, default=float)
 

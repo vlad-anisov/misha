@@ -29,7 +29,7 @@ MANNEQUINS = {
 R_THIGH, R_KNEE, R_SHIN = 70.0, 55.0, 50.0
 TARGET = dict(knee=(110, 140), hip=(95, 125), elbow=(100, 150))
 
-SEAT_MOUNT_Z = FIN_Z1 + 8 + 46 + 8          # 197 — как в simrig.build_seat
+SEAT_MOUNT_Z = FIN_Z1 + 8 + 58 + 8          # 209 — как в simrig.build_seat
 SEAT_ZC = SEAT_MOUNT_Z + 35                  # низ подушки (условно)
 RIM_R, RIM_TUBE = 150.0, 14.0
 

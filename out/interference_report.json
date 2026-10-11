@@ -9,10 +9,15 @@
    "xc1": 925.0,
    "xc2": 1200.0,
    "slide": 0.0,
-   "show_refs": true
+   "show_refs": true,
+   "side": 1,
+   "zp": 430.0,
+   "front_mount": false
   },
-  "n_parts": 166,
+  "n_parts": 167,
   "interference": [],
+  "nuts_on_bolts_ok": 32,
+  "nuts_not_on_bolt": [],
   "inner_hole_z": [
    232.0,
    307.0
@@ -28,10 +33,15 @@
    "xc1": 925.0,
    "xc2": 1200.0,
    "slide": 0.0,
-   "show_refs": true
+   "show_refs": true,
+   "side": 1,
+   "zp": 430.0,
+   "front_mount": false
   },
-  "n_parts": 166,
+  "n_parts": 167,
   "interference": [],
+  "nuts_on_bolts_ok": 32,
+  "nuts_not_on_bolt": [],
   "inner_hole_z": [
    157.0,
    232.0
@@ -47,10 +57,15 @@
    "xc1": 925.0,
    "xc2": 1200.0,
    "slide": 0.0,
-   "show_refs": true
+   "show_refs": true,
+   "side": 1,
+   "zp": 430.0,
+   "front_mount": false
   },
-  "n_parts": 166,
+  "n_parts": 167,
   "interference": [],
+  "nuts_on_bolts_ok": 32,
+  "nuts_not_on_bolt": [],
   "inner_hole_z": [
    157.0,
    232.0
@@ -66,10 +81,15 @@
    "xc1": 925.0,
    "xc2": 1200.0,
    "slide": 0.0,
-   "show_refs": true
+   "show_refs": true,
+   "side": 1,
+   "zp": 430.0,
+   "front_mount": false
   },
-  "n_parts": 166,
+  "n_parts": 167,
   "interference": [],
+  "nuts_on_bolts_ok": 32,
+  "nuts_not_on_bolt": [],
   "inner_hole_z": [
    307.0,
    382.0
@@ -85,10 +105,15 @@
    "xc1": 925.0,
    "xc2": 1200.0,
    "slide": 0.0,
-   "show_refs": true
+   "show_refs": true,
+   "side": 1,
+   "zp": 430.0,
+   "front_mount": false
   },
-  "n_parts": 166,
+  "n_parts": 167,
   "interference": [],
+  "nuts_on_bolts_ok": 32,
+  "nuts_not_on_bolt": [],
   "inner_hole_z": [
    307.0,
    382.0
@@ -104,10 +129,15 @@
    "xc1": 925.0,
    "xc2": 1200.0,
    "slide": 0.0,
-   "show_refs": true
+   "show_refs": true,
+   "side": 1,
+   "zp": 430.0,
+   "front_mount": false
   },
-  "n_parts": 166,
+  "n_parts": 167,
   "interference": [],
+  "nuts_on_bolts_ok": 32,
+  "nuts_not_on_bolt": [],
   "inner_hole_z": [
    232.0,
    307.0
@@ -123,10 +153,15 @@
    "xc1": 925.0,
    "xc2": 1200.0,
    "slide": 0.0,
-   "show_refs": true
+   "show_refs": true,
+   "side": 1,
+   "zp": 430.0,
+   "front_mount": false
   },
-  "n_parts": 166,
+  "n_parts": 167,
   "interference": [],
+  "nuts_on_bolts_ok": 32,
+  "nuts_not_on_bolt": [],
   "inner_hole_z": [
    232.0,
    307.0
@@ -142,10 +177,15 @@
    "xc1": 925.0,
    "xc2": 1200.0,
    "slide": 0.0,
-   "show_refs": true
+   "show_refs": true,
+   "side": 1,
+   "zp": 430.0,
+   "front_mount": false
   },
-  "n_parts": 166,
+  "n_parts": 167,
   "interference": [],
+  "nuts_on_bolts_ok": 32,
+  "nuts_not_on_bolt": [],
   "inner_hole_z": [
    232.0,
    307.0
@@ -161,10 +201,15 @@
    "xc1": 925.0,
    "xc2": 1200.0,
    "slide": 0.0,
-   "show_refs": true
+   "show_refs": true,
+   "side": 1,
+   "zp": 430.0,
+   "front_mount": false
   },
-  "n_parts": 166,
+  "n_parts": 167,
   "interference": [],
+  "nuts_on_bolts_ok": 32,
+  "nuts_not_on_bolt": [],
   "inner_hole_z": [
    232.0,
    307.0
@@ -180,10 +225,15 @@
    "xc1": 875,
    "xc2": 1150,
    "slide": 0.0,
-   "show_refs": true
+   "show_refs": true,
+   "side": 1,
+   "zp": 430.0,
+   "front_mount": false
   },
-  "n_parts": 166,
+  "n_parts": 167,
   "interference": [],
+  "nuts_on_bolts_ok": 32,
+  "nuts_not_on_bolt": [],
   "inner_hole_z": [
    232.0,
    307.0
@@ -199,13 +249,138 @@
    "xc1": 975,
    "xc2": 1250,
    "slide": 0.0,
-   "show_refs": true
+   "show_refs": true,
+   "side": 1,
+   "zp": 430.0,
+   "front_mount": false
   },
-  "n_parts": 166,
+  "n_parts": 167,
   "interference": [],
+  "nuts_on_bolts_ok": 32,
+  "nuts_not_on_bolt": [],
   "inner_hole_z": [
    232.0,
    307.0
+  ]
+ },
+ "shifter_low_front": {
+  "cfg": {
+   "name": "shifter_low_front",
+   "H": 650.0,
+   "d": 0.0,
+   "xp": 285.0,
+   "alpha": 30.0,
+   "xc1": 875,
+   "xc2": 1150,
+   "slide": -100,
+   "show_refs": true,
+   "side": 1,
+   "zp": 380,
+   "front_mount": false
+  },
+  "n_parts": 167,
+  "interference": [],
+  "nuts_on_bolts_ok": 32,
+  "nuts_not_on_bolt": [],
+  "inner_hole_z": [
+   232.0,
+   307.0
+  ]
+ },
+ "shifter_high_rear": {
+  "cfg": {
+   "name": "shifter_high_rear",
+   "H": 650.0,
+   "d": 0.0,
+   "xp": 285.0,
+   "alpha": 30.0,
+   "xc1": 975,
+   "xc2": 1250,
+   "slide": 100,
+   "show_refs": true,
+   "side": 1,
+   "zp": 480,
+   "front_mount": false
+  },
+  "n_parts": 167,
+  "interference": [],
+  "nuts_on_bolts_ok": 32,
+  "nuts_not_on_bolt": [],
+  "inner_hole_z": [
+   232.0,
+   307.0
+  ]
+ },
+ "shifter_left": {
+  "cfg": {
+   "name": "shifter_left",
+   "H": 650.0,
+   "d": 0.0,
+   "xp": 285.0,
+   "alpha": 30.0,
+   "xc1": 925.0,
+   "xc2": 1200.0,
+   "slide": 0.0,
+   "show_refs": true,
+   "side": -1,
+   "zp": 430.0,
+   "front_mount": false
+  },
+  "n_parts": 167,
+  "interference": [],
+  "nuts_on_bolts_ok": 32,
+  "nuts_not_on_bolt": [],
+  "inner_hole_z": [
+   232.0,
+   307.0
+  ]
+ },
+ "deck_front_mount_low_back": {
+  "cfg": {
+   "name": "deck_front_mount_low_back",
+   "H": 575,
+   "d": 75,
+   "xp": 285.0,
+   "alpha": 30.0,
+   "xc1": 925.0,
+   "xc2": 1200.0,
+   "slide": 0.0,
+   "show_refs": true,
+   "side": 1,
+   "zp": 430.0,
+   "front_mount": true
+  },
+  "n_parts": 179,
+  "interference": [],
+  "nuts_on_bolts_ok": 36,
+  "nuts_not_on_bolt": [],
+  "inner_hole_z": [
+   157.0,
+   232.0
+  ]
+ },
+ "deck_front_mount_high_fwd": {
+  "cfg": {
+   "name": "deck_front_mount_high_fwd",
+   "H": 725,
+   "d": -75,
+   "xp": 285.0,
+   "alpha": 30.0,
+   "xc1": 925.0,
+   "xc2": 1200.0,
+   "slide": 0.0,
+   "show_refs": true,
+   "side": 1,
+   "zp": 430.0,
+   "front_mount": true
+  },
+  "n_parts": 179,
+  "interference": [],
+  "nuts_on_bolts_ok": 36,
+  "nuts_not_on_bolt": [],
+  "inner_hole_z": [
+   307.0,
+   382.0
   ]
  }
 }

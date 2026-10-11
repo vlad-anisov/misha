@@ -36,10 +36,10 @@ GAP = 0.2                                 # зазор «щека–гребен
 POST_X = 550.0             # ось стоек (вдоль X); исходно 450 — сдвинуто по эргономике
 POST_YC = 265.0            # ось стоек поперёк (наружная грань заподлицо с лонжероном)
 OUTER = 50.0; T_OUTER = 3.0          # наружная стойка 50x50x3
-INNER = 40.0; T_INNER = 3.0          # внутренняя (выдвижная) 40x40x3
-OUTER_TOP = 447.0          # верх наружной стойки
-INNER_L = 370.0            # длина внутренней стойки
-STACK = 108.0              # от верха площадки до верха внутренней стойки (лист 8 + гребень 50 + опора 10 + поперечина 40)
+INNER = 40.0                         # внутренняя (выдвижная) стойка — сплошной квадрат 40x40 (без втулок, без смятия)
+OUTER_TOP = 457.0          # верх наружной стойки
+INNER_L = 380.0            # длина внутренней стойки
+STACK = 98.0               # от верха площадки до верха внутренней стойки (лист 8 + гребень 50 + поперечина 40)
 H_MIN, H_MAX, H_STEP = 575.0, 725.0, 25.0   # высота верха площадки руля от пола
 H_NOM = 650.0             # исходные 625 — в диапазоне
 INNER_HOLE_FROM_BOTTOM = (60.0, 135.0)      # два фиксатора на внутренней стойке (разнос 75)
@@ -62,12 +62,21 @@ PEDAL_PIVOT_Z = 120.0
 PEDAL_XP = [260.0 + PITCH * i for i in range(6)]   # 260..385 — положение оси качания
 PEDAL_ANGLES = [20.0, 30.0, 40.0, 50.0, 60.0]     # угол площадки к горизонту, град
 PEDAL_R = (250.0,)                                 # одна дуга фиксации (+ ось = 2 болта на щеку)
-TRAY_W, TRAY_L, TRAY_T = 460.0, 330.0, 6.0
+TRAY_W, TRAY_L, TRAY_T = 460.0, 330.0, 8.0
 TRAY_FLANGE_H = 50.0
 UPRIGHT_Y0 = 231.0                                 # внутренняя грань щёк-секторов
 
 # ------------------------------------------------------------------ сиденье
 SEAT_XC = [875.0 + PITCH * i for i in range(16)]    # 875..1250 — оси поперечин сиденья
+# ------------------------------------------------- боковой кронштейн шифтера / ручника
+SIDE_ARM_Y = (301.0, 380.0)  # консоль 40x40x3 от фланца поперечины до стакана
+SIDE_CUP_YC = 405.0          # ось стакана 50x50x3 (снаружи основания)
+SIDE_CUP_Z = (60.0, 365.0)   # стакан по высоте
+SIDE_CUP_ROW = [155.0 + PITCH * i for i in range(8)]   # 155…330 — ряд отверстий стакана
+SIDE_BAR_L = 250.0           # сплошной квадрат 40x40 под платформой
+SIDE_BAR_HOLES = (150.0, 225.0)  # от низа платформы вниз (разнос 75)
+SIDE_ZP = [380.0 + PITCH * i for i in range(5)]   # низ платформы 380…480 — 5 положений
+SIDE_PLATE = (300.0, 170.0)  # платформа X x Y, лист 8 мм, отверстия под устройства — по месту
 SLIDE_TRAVEL = 200.0     # типовой ход салазок сиденья (допущение); slide<0 — сиденье ближе к рулю
 SEAT_RECLINE = 22.0      # наклон спинки от вертикали (условный ковш), град
 
@@ -83,6 +92,9 @@ class Config:
     xc2: float = 1200.0       # задняя поперечина сиденья
     slide: float = 0.0        # положение сиденья на салазках, −100…+100 (минус — ближе к рулю)
     show_refs: bool = True    # показывать условные габариты руля/сиденья
+    side: int = 1             # сторона кронштейна шифтера: +1 справа, −1 слева, 0 — не ставить
+    zp: float = 430.0         # высота низа платформы шифтера
+    front_mount: bool = False # фронтальный кронштейн базы руля (вместо нижнего крепления)
 
     def validate(self):
         assert H_MIN <= self.H <= H_MAX and (self.H - H_MIN) % H_STEP == 0, self.H
@@ -91,6 +103,7 @@ class Config:
         assert self.alpha in PEDAL_ANGLES, self.alpha
         assert self.xc1 in SEAT_XC and self.xc2 in SEAT_XC and self.xc2 - self.xc1 >= 150
         assert -SLIDE_TRAVEL / 2 <= self.slide <= SLIDE_TRAVEL / 2
+        assert self.side in (-1, 0, 1) and self.zp in SIDE_ZP
 
 
 CONFIGS = {
@@ -105,4 +118,9 @@ CONFIGS = {
     "pedals_rear_steep": Config("pedals_rear_steep", xp=385, alpha=60),
     "seat_front": Config("seat_front", xc1=875, xc2=1150),
     "seat_rear": Config("seat_rear", xc1=975, xc2=1250),
+    "shifter_low_front": Config("shifter_low_front", xc1=875, xc2=1150, zp=380, slide=-100),
+    "shifter_high_rear": Config("shifter_high_rear", xc1=975, xc2=1250, zp=480, slide=100),
+    "shifter_left": Config("shifter_left", side=-1),
+    "deck_front_mount_low_back": Config("deck_front_mount_low_back", H=575, d=75, front_mount=True),
+    "deck_front_mount_high_fwd": Config("deck_front_mount_high_fwd", H=725, d=-75, front_mount=True),
 }
