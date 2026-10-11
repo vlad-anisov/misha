@@ -232,7 +232,7 @@ def build_base(m: Model):
     zc = Z_BASE + TUBE / 2
     for side, sgn in (("R", 1), ("L", -1)):
         m.add(f"base_rail_{side}", tube("X", 0, BASE_L, (sgn * RAIL_YC, zc), TUBE, TUBE, T_RAIL),
-              C_BASE, "base", "Труба 40x40x3, L=1300")
+              C_BASE, "base", "Труба 40x40x3, L=%.0f" % BASE_L)
     for side, sgn in (("R", 1), ("L", -1)):
         for k, xe in enumerate((-3.0, BASE_L)):
             m.add(f"base_cap_{side}{k+1}", box(xe, xe + 3, sgn * (RAIL_YC - 20), sgn * (RAIL_YC + 20), Z_BASE, Z_BASE + TUBE),
@@ -306,14 +306,14 @@ def outer_post_parts():
         ln = ln.fuse(box(POST_X - 30, POST_X + 30, ya, yb, OUTER_TOP, OUTER_TOP + 5))
         ln = cut_all(ln, holes)
         out.append((f"tower_liner_steel_{nm}", ln, C_LINER,
-                    "Лист 2 мм нерж. (лазер), вкладыш Т-образный 36/60x%.0f, 10 отв. Ø13; подбор 1.5/2.0/2.5"
+                    "Лист 2 мм ст. (холоднокат., лазер), вкладыш Т-образный 36/60x%.0f, 10 отв. Ø13; подбор 1.5/2.0/2.5"
                     % (OUTER_TOP + 5 - Z_RAIL_TOP - 50)))
     # вкладыши по граням X (без отверстий) — выбирают зазор поперёк оси болтов; головка лежит на головках Y-вкладышей
     for nm, (xa, xb) in (("front", (x0 + T_OUTER, x0 + T_OUTER + LINER)), ("rear", (x1 - T_OUTER - LINER, x1 - T_OUTER))):
         ln = box(xa, xb, POST_YC - 18, POST_YC + 18, Z_RAIL_TOP + 50, OUTER_TOP + 5)
         ln = ln.fuse(box(xa, xb, POST_YC - 28, POST_YC + 28, OUTER_TOP + 5, OUTER_TOP + 10))
         out.append((f"tower_liner_x_{nm}", ln, C_LINER,
-                    "Лист 2 мм нерж. (лазер), вкладыш Т-образный 36/56x%.0f, без отв.; подбор 1.5/2.0/2.5"
+                    "Лист 2 мм ст. (холоднокат., лазер), вкладыш Т-образный 36/56x%.0f, без отв.; подбор 1.5/2.0/2.5"
                     % (OUTER_TOP + 10 - Z_RAIL_TOP - 50)))
     return out
 
@@ -420,8 +420,8 @@ def build_deck(m: Model):
     plate = box(x0, x1, -DECK_W / 2, DECK_W / 2, H - DECK_T, H)
     plate = cut_all(plate, [cyl("Z", (x, y), H - 20, H + 20, HOLE) for (x, y) in fm_holes])
     m.add("deck_plate", plate, C_DECK, "deck",
-          "Лист 8 мм %.0fx%.0f, 4 отв. Ø13 под фронтальный кронштейн (отверстия под базу — после выбора базы)"
-          % (DECK_W, DECK_D))
+          "Лист %.0f мм %.0fx%.0f, 4 отв. Ø13 под фронтальный кронштейн (отверстия под базу — после выбора базы)"
+          % (DECK_T, DECK_W, DECK_D))
     if m.cfg.front_mount:
         fl = cut_all(box(x0 + 20, x0 + 190, -165, 165, H, H + PLATE),
                      [cyl("Z", (x, y), H - 5, H + 20, HOLE) for (x, y) in fm_holes])
@@ -574,11 +574,11 @@ def build_side_mount(m: Model):
         ln = box(xa, xb, SIDE_CUP_YC - 18, SIDE_CUP_YC + 18, SIDE_CUP_ROW[0] - 30, SIDE_CUP_Z[1])
         ln = ln.fuse(box(xa, xb, SIDE_CUP_YC - 30, SIDE_CUP_YC + 30, SIDE_CUP_Z[1], SIDE_CUP_Z[1] + 5))
         parts.append((f"side_liner_{nm}", cut_all(ln, holes), C_LINER,
-                      "Лист 2 мм нерж. (лазер), вкладыш Т-образный, 8 отв. Ø13", "liner"))
+                      "Лист 2 мм ст. (холоднокат., лазер), вкладыш Т-образный, 8 отв. Ø13", "liner"))
     for nm, (ya, yb) in (("in", (SIDE_CUP_YC - 22, SIDE_CUP_YC - 20)), ("out", (SIDE_CUP_YC + 20, SIDE_CUP_YC + 22))):
         ln = box(xc - 18, xc + 18, ya, yb, SIDE_CUP_ROW[0] - 30, SIDE_CUP_Z[1] + 5)
         ln = ln.fuse(box(xc - 28, xc + 28, ya, yb, SIDE_CUP_Z[1] + 5, SIDE_CUP_Z[1] + 10))
-        parts.append((f"side_liner_y_{nm}", ln, C_LINER, "Лист 2 мм нерж. (лазер), вкладыш Т-образный, без отв.", "liner"))
+        parts.append((f"side_liner_y_{nm}", ln, C_LINER, "Лист 2 мм ст. (холоднокат., лазер), вкладыш Т-образный, без отв.", "liner"))
     zp = m.cfg.zp
     zh = [zp - h for h in SIDE_BAR_HOLES]
     for z in zh:
