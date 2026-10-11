@@ -84,10 +84,11 @@ def plate_outline(shape):
     o = outer.min(axis=0)
     outer = outer - o
     holes = [(c - o, r, h - o) for (c, r, h) in holes]
+    plate_outline.axes = (ex, ey)
     return outer, holes, t
 
 
-def write_dxf(path, outer, holes, label, mark=None):
+def write_dxf(path, outer, holes, label, mark=None, arrows=()):
     doc = ezdxf.new("R2010")
     doc.units = ezdxf.units.MM
     msp = doc.modelspace()
@@ -103,6 +104,10 @@ def write_dxf(path, outer, holes, label, mark=None):
         hh = max(4.0, min(8.0, h / 6))
         msp.add_text(mark, height=hh, dxfattribs={"layer": "MARK"}).set_placement(
             (w * 0.5, min(h * 0.5, h - hh - 3)), align=ezdxf.enums.TextEntityAlignment.MIDDLE_CENTER)
+    w, h = outer.max(axis=0)
+    for k, (txt, ang) in enumerate(arrows):   # гравировка направления установки
+        msp.add_text(txt, height=5, rotation=ang, dxfattribs={"layer": "MARK"}).set_placement(
+            (w * 0.25, h * (0.3 + 0.25 * k)), align=ezdxf.enums.TextEntityAlignment.MIDDLE_CENTER)
     doc.saveas(path)
 
 
@@ -135,7 +140,13 @@ def main():
         outer, holes, t = plate_outline(p.shape)
         pos = f"Л{i+1:02d}"
         fn = f"{pos}_{k}_t{t:.0f}.dxf"
-        write_dxf(os.path.join(FAB, "dxf", fn), outer, holes, f"{pos} {k} t={t:.0f} x{d['n']}", mark=pos)
+        ex, ey = plate_outline.axes
+        arrows = []
+        for txt, v in (("ПЕРЕД →", np.array([-1.0, 0, 0])), ("ВВЕРХ →", np.array([0, 0, 1.0]))):
+            fx, fy = v @ ex, v @ ey
+            if math.hypot(fx, fy) > 0.6:
+                arrows.append((txt, math.degrees(math.atan2(fy, fx))))
+        write_dxf(os.path.join(FAB, "dxf", fn), outer, holes, f"{pos} {k} t={t:.0f} x{d['n']}", mark=pos, arrows=arrows)
         w, h = outer.max(axis=0)
         rows.append(dict(pos=pos, part=k, thickness_mm=round(t, 1), size_mm=f"{w:.0f}x{h:.0f}", holes=len(holes),
                          qty=d["n"], spec=p.spec, dxf=fn))
@@ -186,7 +197,7 @@ def main():
             note = "ТРУБОРЕЗ: 8 сквозных отв. Ø13 (оси на %s мм от низа)" % ", ".join(
                 f"{z - SIDE_CUP_Z[0]:.0f}" for z in SIDE_CUP_ROW)
         if "inner_post" in k or "side_bar" in k:
-            note = "2 отв. Ø13 — сверлить ПО МЕСТУ через отверстия наружной трубы (см. порядок сборки)"
+            note = "КАЛИБРОВАННЫЙ квадрат (ГОСТ 8559, h11); 2 отв. Ø13 — сверлильный станок по лазерному кондуктору (см. docs/05)"
         k = re.sub(r"_\d+$", "", k)
         key = (k, p.spec.split(",")[0], round(L))
         if key not in cuts:

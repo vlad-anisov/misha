@@ -222,16 +222,16 @@ def sheet_iso(m):
         return project([(x, y, z)], "iso_rear")[0]
     cfg = m.cfg
     tags = [
-        (P(0, -270, 65), "Основание 1300×580,\nтруба 40×40×3", (-160, 60)),
-        (P(550, -290, 300), "Наружная стойка 50×50×3\n+ косынка-накладка 8 мм,\nряд отв. Ø13 шаг 25", (-260, 40)),
-        (P(550, -265, cfg.H - 140), "Выдвижная стойка — сплошной\nквадрат 40×40 (телескоп, 2 болта М12)", (-300, 40)),
-        (P(550 + 150, -270, 250), "Подкос 40×40×2", (60, -40)),
-        (P(550, -190, cfg.H - 40), "Седло-вилка + гребень 50×8\n(продольная регулировка)", (-330, 60)),
+        (P(0, -270, 65), f"Основание {BASE_L:.0f}×{BASE_W:.0f},\nтруба 40×40×3", (-160, 60)),
+        (P(POST_X, -290, 300), "Наружная стойка 50×50×3\n+ косынка-накладка 8 мм,\nряд отв. Ø13 шаг 25", (-260, 40)),
+        (P(POST_X, -265, cfg.H - 140), "Выдвижная стойка — сплошной\nквадрат 40×40 (телескоп, 2 болта М12)", (-300, 40)),
+        (P(POST_X + 150, -270, 250), "Подкос 40×40×3", (60, -40)),
+        (P(POST_X, -190, cfg.H - 40), "Седло-вилка + гребень 50×8\n(продольная регулировка)", (-330, 60)),
         (P(400, 0, cfg.H), "Площадка руля 420×260×8", (-120, 110)),
         (P(cfg.xp - 120, -235, 230), "Педальная площадка 450×330\nна щеках-секторах (угол 20…60°)", (-200, -60)),
         (P(cfg.xp - 120, -275, 110), "Башмак на гребне 50×8\n(3 болта М12)", (-160, -110)),
         (P(cfg.xc1, -260, 160), "Поперечины сиденья\nна башмаках (шаг 25)", (100, -80)),
-        (P(1280, -270, 20), "Регулируемые опоры М12 (6 шт.)", (60, -50)),
+        (P(FOOT_X[-1], -320, 20), "Регулируемые опоры М12 (6 шт.)", (60, -50)),
     ]
     for xy, t, dxy in tags:
         note(ax, xy, (xy[0] + dxy[0], xy[1] + dxy[1]), t, fs=7.5)
@@ -245,7 +245,7 @@ def sheet_iso(m):
 
 def sheet_side(m):
     cfg = m.cfg
-    fig = new_sheet("Вид сбоку (слева)", "Номинал: H=650, d=0, педали X=285 / 30°, сиденье 925/1200")
+    fig = new_sheet("Вид сбоку (слева)", f"Номинал: H={H_NOM:.0f}, d=0, педали X={m.cfg.xp:.0f} / {m.cfg.alpha:.0f}°, сиденье {m.cfg.xc1:.0f}/{m.cfg.xc2:.0f}")
     ax = axes(fig, [0.03, 0.12, 0.94, 0.84])
     fp = frame_parts(m)
     lines(ax, fp, "side", hidden=False)
@@ -258,12 +258,12 @@ def sheet_side(m):
     note(ax, (b[0], b[1]), (b[0] - 20, b[1] + 150), "ВЕРХНИЙ край педальной площадки\n(к переду кокпита)", color="#0a8a3a")
     note(ax, (a[0], a[1]), (a[0] + 60, a[1] + 260), "НИЖНИЙ край (к сиденью)", color="#0a8a3a")
     label(ax, (-10, 760), "◄ ПЕРЕД (педали)", fontsize=12, weight="bold", color="#a00000")
-    label(ax, (1090, 760), "СИДЕНЬЕ ►", fontsize=12, weight="bold", color="#a00000")
+    label(ax, (BASE_L - 210, 760), "СИДЕНЬЕ ►", fontsize=12, weight="bold", color="#a00000")
     # размеры
     dim(ax, (0, Z_BASE), (BASE_L, Z_BASE), -110, axis="x")
     dim(ax, (0, Z_BASE), (POST_X, Z_BASE), -75, axis="x")
     dim(ax, (POST_X, Z_BASE), (CROSS_X[2], Z_BASE), -75, axis="x")
-    dim(ax, (0, 0), (0, H), -120, axis="y", text=f"{H:.0f} (575…725, шаг 25)")
+    dim(ax, (0, 0), (0, H), -120, axis="y", text=f"{H:.0f} ({H_MIN:.0f}…{H_MAX:.0f}, шаг 25)")
     dim(ax, (BASE_L, 0), (BASE_L, Z_BASE), 40, axis="y", text="45±15")
     dim(ax, (BASE_L, 0), (BASE_L, Z_RAIL_TOP), 85, axis="y")
     dim(ax, (POST_X + 25, Z_RAIL_TOP), (POST_X + 25, OUTER_TOP), 210, axis="y", text=f"{OUTER_TOP - Z_RAIL_TOP:.0f}")
@@ -274,16 +274,16 @@ def sheet_side(m):
         ax.plot([x, x - 15], [0, -15], color="k", lw=0.4)
     # педали: ось
     ax.plot([cfg.xp], [PEDAL_PIVOT_Z], "o", ms=4, color="#0a8a3a", zorder=10)
-    dim(ax, (0, PEDAL_PIVOT_Z), (cfg.xp, PEDAL_PIVOT_Z), -330, axis="x", text=f"{cfg.xp:.0f} (260…385, шаг 25)")
+    dim(ax, (0, PEDAL_PIVOT_Z), (cfg.xp, PEDAL_PIVOT_Z), -330, axis="x", text=f"{cfg.xp:.0f} ({PEDAL_XP[0]:.0f}…{PEDAL_XP[-1]:.0f}, шаг 25)")
     note(ax, (cfg.xp, PEDAL_PIVOT_Z), (cfg.xp + 120, 280), f"ось качания Z={PEDAL_PIVOT_Z:.0f}\nугол {cfg.alpha:.0f}° (20…60, шаг 10)")
     dim(ax, (0, FIN_Z1), (cfg.xc1, FIN_Z1), -265, axis="x", text=f"{cfg.xc1:.0f} (900…1225, шаг 25)")
     dim(ax, (cfg.xc1, FIN_Z1 + 54), (cfg.xc2, FIN_Z1 + 54), 40, axis="x")
     rx, rz, _ = m.notes["rim"]
     ax.plot([rx], [rz], "+", ms=10, color="0.4")
     note(ax, (rx, rz), (rx + 120, rz + 100), f"центр обода (допущение)\nX≈{rx:.0f}, Z≈{rz:.0f}", color="0.35")
-    note(ax, (POST_X + 25 + 120, 300), (POST_X + 300, 470), "подкос 40×40×2")
+    note(ax, (POST_X + 25 + 120, 300), (POST_X + 300, 470), "подкос 40×40×3")
     note(ax, (POST_X, 300), (POST_X - 330, 520), "ряд 10 отв. Ø13, шаг 25\n(положения высоты)")
-    fit(ax, [-150, 1450], [-180, 900])
+    fit(ax, [-150, BASE_L + 150], [-180, 950])
     save(fig, "S02_side")
 
 
@@ -336,8 +336,8 @@ def sheet_top(m):
     lines(ax, [p for p in m.parts if p.ref and "seat" not in p.name], "top", lw=0.4, color="0.6")
     dim(ax, (0, -BASE_W / 2), (BASE_L, -BASE_W / 2), -80, axis="x")
     dim(ax, (BASE_L, -BASE_W / 2), (BASE_L, BASE_W / 2), 50, axis="y")
-    dim(ax, (PEDAL_FIN_X[0], RAIL_YC), (PEDAL_FIN_X[1], RAIL_YC), 60, axis="x", text="гребень педалей 20…410")
-    dim(ax, (SEAT_FIN_X[0], RAIL_YC), (SEAT_FIN_X[1], RAIL_YC), 60, axis="x", text="гребень сиденья 820…1290")
+    dim(ax, (PEDAL_FIN_X[0], RAIL_YC), (PEDAL_FIN_X[1], RAIL_YC), 60, axis="x", text=f"гребень педалей {PEDAL_FIN_X[0]:.0f}…{PEDAL_FIN_X[1]:.0f}")
+    dim(ax, (SEAT_FIN_X[0], RAIL_YC), (SEAT_FIN_X[1], RAIL_YC), 60, axis="x", text=f"гребень сиденья {SEAT_FIN_X[0]:.0f}…{SEAT_FIN_X[1]:.0f}")
     x0d, x1d = DECK_X0_NOM + cfg.d, DECK_X0_NOM + DECK_D + cfg.d
     dim(ax, (x0d, DECK_W / 2), (x1d, DECK_W / 2), 105, axis="x", text="площадка руля 300")
     dim(ax, (x0d, -DECK_W / 2), (x0d, DECK_W / 2), -40, axis="y", text="420")
@@ -346,7 +346,7 @@ def sheet_top(m):
     dim(ax, (cfg.xc1, -BASE_W / 2), (cfg.xc2, -BASE_W / 2), -45, axis="x")
     label(ax, (-20, 330), "◄ ПЕРЕД", fontsize=11, weight="bold", color="#a00000")
     label(ax, (1180, 330), "СИДЕНЬЕ ►", fontsize=11, weight="bold", color="#a00000")
-    note(ax, (cfg.xc1, 0), (cfg.xc1 + 80, 120), "полки 80×6 поперечин —\nсверловка под салазки по месту")
+    note(ax, (cfg.xc1, 0), (cfg.xc1 + 80, 120), "полки 80×8 (лазер) —\nсверловка под салазки по месту")
     note(ax, (cfg.xc1 + 120, 190), (cfg.xc1 + 220, 230), "адаптерные полосы 50×8\n(без отверстий до выбора сиденья)")
     fit(ax, [-120, 1420], [-420, 420])
     save(fig, "S04_top")
@@ -357,7 +357,7 @@ def sheet_top(m):
 def sheet_height(m):
     cfg = m.cfg
     fig = new_sheet("Узел регулировки высоты руля (крупно)",
-                    "Телескоп: труба 50×50×3 / сплошной квадрат 40×40, 7 положений 575…725 шаг 25, 2 болта М12 на стойку")
+                    f"Телескоп: труба 50×50×3 / сплошной квадрат 40×40, 7 положений {H_MIN:.0f}…{H_MAX:.0f} шаг 25, 2 болта М12 на стойку")
     H = cfg.H
     tower = [p for p in m.parts if p.group in ("tower_fixed", "height", "base") and p.name.endswith("_R") or
              p.name.startswith("height_head")]
@@ -369,9 +369,9 @@ def sheet_height(m):
     cut_half = clip(cut, x=(POST_X - 140, POST_X + 0.0))
     shaded(ax, cut_half + [p for p in cut if "liner" in p.name or "bolt" in p.name], ((-1.0, -0.9, 0.55), (1, -1.1, 0)),
            cull=False, max_edge=25)
-    ax.set_title("а) Правая стойка — изометрия с вырезом по оси (X<550)", fontsize=9, weight="bold", loc="left")
+    ax.set_title(f"а) Правая стойка — изометрия с вырезом по оси (X<{POST_X:.0f})", fontsize=9, weight="bold", loc="left")
     # (б) разрез A-A плоскостью X=POST_X (вид спереди)
-    ax = axes(fig, [0.33, 0.12, 0.30, 0.84], "б) Разрез А-А по оси болтов (плоскость X=550)")
+    ax = axes(fig, [0.33, 0.12, 0.30, 0.84], f"б) Разрез А-А по оси болтов (плоскость X={POST_X:.0f})")
     behind = clip(reg, x=(POST_X, POST_X + 200))
     lines(ax, behind, "front", lw=0.4, color="0.45")
     section(ax, reg, (POST_X, 0, 0), (1, 0, 0), "front")
@@ -387,7 +387,7 @@ def sheet_height(m):
     note(ax, (-(POST_YC + 28), zb[1]), (-430, zb[1] + 30), "болт М12×90 8.8\n+ шайба")
     note(ax, (-(POST_YC - 29), zb[0]), (-110, zb[0] - 60), "гайка ISO 7042 М12\n+ широкая шайба DIN 9021")
     note(ax, (-(POST_YC - 21), zb[0] + 15), (-110, zb[0] + 120), "сплошной квадрат 40×40 —\nсминаться нечему, втулки не нужны")
-    note(ax, (-(POST_YC + 21), OUTER_TOP - 120), (-430, OUTER_TOP - 40), "вкладыш 2 мм нерж.\n(подбор 1.5/2.0/2.5) — заполняет\nзазор, пакет без смятия")
+    note(ax, (-(POST_YC + 21), OUTER_TOP - 120), (-430, OUTER_TOP - 40), "вкладыш 2 мм нерж.\n(подбор 1.5…2.5 шаг 0.25) — заполняет\nзазор, пакет без смятия")
     note(ax, (-(POST_YC + 28), 120), (-430, 150), "косынка-накладка 8 мм\n(усиливает стенку под болтами)")
     note(ax, (-(POST_YC - 40), H - STACK + 20), (-130, H - 20), "верхняя поперечина 40×40×3")
     fit(ax, [-480, 60], [20, H + 10])
@@ -398,7 +398,7 @@ def sheet_height(m):
     section(ax, reg2, (0, 0, zc), (0, 0, 1), "top")
     dim(ax, (POST_X - 25, POST_YC + 25), (POST_X + 25, POST_YC + 25), 45, axis="x", text="50")
     dim(ax, (POST_X - 20, POST_YC - 20), (POST_X + 20, POST_YC - 20), -45, axis="x", text="40")
-    note(ax, (POST_X - 24, POST_YC), (POST_X - 120, POST_YC + 40), "зазор по X 2 мм —\nдержат болты\nи трение пакета")
+    note(ax, (POST_X - 24, POST_YC), (POST_X - 120, POST_YC + 40), "вкладыш по грани X\n+ прижимной винт М10")
     note(ax, (POST_X, POST_YC + 21), (POST_X + 75, POST_YC + 60), "стальной вкладыш 2 мм\n(грани Y, под болтом)")
     fit(ax, [POST_X - 160, POST_X + 160], [POST_YC - 80, POST_YC + 90], pad=5)
     # (г) пояснение
@@ -407,8 +407,8 @@ def sheet_height(m):
              "1. Наружная стойка 50×50×3 приварена к лонжерону и усилена косынкой-накладкой 8 мм\n"
              "   (снаружи). Ряд 10 отв. Ø13 с шагом 25 мм режет труборез, в косынке — лазер.\n"
              "2. Выдвижная стойка — сплошной квадрат 40×40 с ДВУМЯ отверстиями на расстоянии\n"
-             "   75 мм (сверлятся по месту через трубу) → 7 положений через 25 мм.\n"
-             "3. Зазор 2 мм по граням Y заполнен калиброванными стальными вкладышами — при\n"
+             "   75 мм (станок + лазерный кондуктор) → 7 положений через 25 мм.\n"
+             "3. Зазор 2 мм по ВСЕМ 4 граням заполнен вкладышами (подбор 1.5…2.5, шаг 0.25) — при\n"
              "   затяжке пакет «косынка–стенка–вкладыш–квадрат–вкладыш–стенка» сплошной, не мнётся.\n"
              "4. Перекрытие телескопа ≥200 мм (5 ширин трубы) — перекос исключён. Зазор по X\n"
              "   не выбирается отдельной деталью: его держат болты в отверстиях и трение пакета.\n"
@@ -417,12 +417,12 @@ def sheet_height(m):
              "6. Обе стойки связаны верхней поперечиной в П-раму — перестановка выполняется\n"
              "   синхронно: сначала ослабить 4 болта, поднять/опустить узел, вставить болты.",
              fontsize=7.6, va="top", linespacing=1.35)
-    fig.text(0.635, 0.21, "Почему 25 мм и 575…725:", fontsize=8.5, weight="bold", va="top")
+    fig.text(0.635, 0.21, f"Почему 25 мм и {H_MIN:.0f}…{H_MAX:.0f}:", fontsize=8.5, weight="bold", va="top")
     fig.text(0.635, 0.19,
              "• 25 мм ≈ 1/12 диаметра обода — разница незаметна для посадки, тоньше\n"
              "  не нужно (тонкая доводка — проставками под базой 5/10 мм).\n"
-             "• Диапазон 150 мм перекрывает P5…P95 (см. лист эргономики); исходные 625\n"
-             "  лежат внутри. Ограничение сверху — перекрытие телескопа ≥200 мм.\n"
+             "• Диапазон 150 мм перекрывает P5…P95 (см. лист эргономики); исходные 625 —\n"
+             "  нижнее положение. Ограничение сверху — перекрытие телескопа ≥200 мм.\n"
              "• При необходимости диапазон расширяется только новыми внутренними\n"
              "  стойками (длиннее), без сварки по раме.",
              fontsize=7.6, va="top", linespacing=1.35)
@@ -512,15 +512,15 @@ def sheet_foreaft(m):
 def sheet_extremes():
     fig = new_sheet("Крайние положения регулировок рулевого узла",
                     "Проверка столкновений: 4 угловые комбинации H × d (вид сбоку) + условный обод")
-    combos = [("wheel_low_fwd", "H=575, d=−75"), ("wheel_low_back", "H=575, d=+75"),
-              ("wheel_high_fwd", "H=725, d=−75"), ("wheel_high_back", "H=725, d=+75")]
+    combos = [("wheel_low_fwd", f"H={H_MIN:.0f}, d=−75"), ("wheel_low_back", f"H={H_MIN:.0f}, d=+75"),
+              ("wheel_high_fwd", f"H={H_MAX:.0f}, d=−75"), ("wheel_high_back", f"H={H_MAX:.0f}, d=+75")]
     rects = [[0.02, 0.53, 0.48, 0.43], [0.51, 0.53, 0.48, 0.43], [0.02, 0.10, 0.48, 0.43], [0.51, 0.10, 0.48, 0.43]]
     for (name, t), r in zip(combos, rects):
         m = build_model(CONFIGS[name])
         ax = axes(fig, r, f"{name}: {t}")
         fixed = [p for p in m.parts if not p.ref and p.group not in ("height", "deck")]
         mov = [p for p in m.parts if not p.ref and p.group in ("height", "deck")]
-        lines(ax, clip(fixed, x=(150, 1000)), "side", lw=0.4, color="0.45")
+        lines(ax, clip(fixed, x=(POST_X - 400, POST_X + 450)), "side", lw=0.4, color="0.45")
         lines(ax, mov, "side", lw=0.8, color="#c04000")
         lines(ax, [p for p in m.parts if p.ref], "side", lw=0.35, color="0.65")
         H = m.cfg.H
@@ -530,7 +530,7 @@ def sheet_extremes():
                 f"{H - STACK - OUTER_TOP - 2:.0f} мм;\n"
                 f"болты высоты на Z={m.notes['inner_hole_z'][0]:.0f}/{m.notes['inner_hole_z'][1]:.0f}",
                 fontsize=7.2)
-        ax.set_xlim(150, 1000); ax.set_ylim(-10, 900)
+        ax.set_xlim(POST_X - 400, POST_X + 450); ax.set_ylim(-10, 950)
     fig.text(0.03, 0.035, "Автоматическая проверка (cad/build.py): во всех 11 конфигурациях пересечений тел "
              "объёмом >1 мм³ не найдено — см. out/interference_report.json", fontsize=8)
     save(fig, "S07_wheel_extremes")
@@ -572,13 +572,13 @@ def sheet_pedals(m):
             rotation=-cfg.alpha, rotation_mode="anchor", ha="center")
     fit(ax, [-160, 560], [20, 560], pad=5)
     # (б) положения вдоль основания
-    ax = axes(fig, [0.61, 0.55, 0.38, 0.41], "б) Крайние положения каретки: X=260 и X=385")
-    for xp, col in ((260, "#0050c0"), (385, "#c04000")):
+    ax = axes(fig, [0.61, 0.55, 0.38, 0.41], f"б) Крайние положения каретки: X={PEDAL_XP[0]:.0f} и X={PEDAL_XP[-1]:.0f}")
+    for xp, col in ((PEDAL_XP[0], "#0050c0"), (PEDAL_XP[-1], "#c04000")):
         mm = build_model(Config(xp=xp, alpha=40, show_refs=False))
         lines(ax, [p for p in mm.parts if p.group == "pedals"], "side", lw=0.6, color=col)
-    lines(ax, clip([p for p in m.parts if p.group in ("base", "tower_fixed") and not p.ref], x=(-100, 650)), "side",
+    lines(ax, clip([p for p in m.parts if p.group in ("base", "tower_fixed") and not p.ref], x=(-100, POST_X + 100)), "side",
           lw=0.4, color="0.5")
-    dim(ax, (260, PEDAL_PIVOT_Z), (385, PEDAL_PIVOT_Z), -95, axis="x", text="125 (6 положений, шаг 25)")
+    dim(ax, (PEDAL_XP[0], PEDAL_PIVOT_Z), (PEDAL_XP[-1], PEDAL_PIVOT_Z), -95, axis="x", text=f"{PEDAL_XP[-1]-PEDAL_XP[0]:.0f} ({len(PEDAL_XP)} положений, шаг 25); ось — 2 ряда по высоте (+50)")
     fit(ax, [-120, 640], [0, 520], pad=5)
     # (в) разрез башмака
     ax = axes(fig, [0.61, 0.10, 0.18, 0.40], "в) Разрез Г-Г: башмак на гребне")
@@ -643,7 +643,7 @@ def sheet_joints(m):
                   "Щека-сектор 8 | фланец площадки 8 | гайка ISO 7042\nна фланце. Ось + болт на дуге R250 "
                   "на каждой\nстороне: момент от тормоза воспринимается парой сил,\nа не трением одного болта."))
     reg = clip([p for p in m.parts if p.name in ("foot_plate_3_R", "foot_weldnut_3_R", "foot_3_R", "base_rail_R")],
-               x=(1220, 1300), y=(230, 310), z=(-5, 90))
+               x=(FOOT_X[-1] - 60, FOOT_X[-1] + 20), y=(230, 360), z=(-5, 95))
     items.append(("5. Регулируемая опора", reg, (1270, 0, 0), (1, 0, 0), "front", ([-310, -230], [-5, 90]),
                   "Пластина 8 мм под лонжероном + приварная гайка М12 снизу\n(резьба не в тонкой стенке). Опора с "
                   "контргайкой,\nход ±15 мм. Нагрузка на опору ≈1 кН."))
@@ -660,10 +660,11 @@ def sheet_joints(m):
     ax = fig.add_axes([0.47, 0.15, 0.51, 0.36]); ax.axis("off")
     ax.set_title("Сводка регулировок", fontsize=9, weight="bold", loc="left")
     data = [
-        ["Высота руля", "575…725 / 25", "2+2 М12, срез + трение", "стальные вкладыши"],
+        ["Высота руля", f"{H_MIN:.0f}…{H_MAX:.0f} / 25", "2+2 М12, срез + трение", "вкладыши 4 грани + прижим М10"],
         ["Руль вперёд-назад", "±75 / 25", "2+2 М12, срез + трение", "съёмная пластина"],
         ["Педали: угол", "20…60° / 10°", "2+2 М12 (ось + дуга)", "—"],
-        ["Педали: вдоль", "260…385 / 25", "3+3 М12 в гребне", "съёмная пластина"],
+        ["Педали: вдоль", f"{PEDAL_XP[0]:.0f}…{PEDAL_XP[-1]:.0f} / 25", "3+3 М12 в гребне", "съёмная пластина"],
+        ["Педали: высота оси", "Z 120 / 170", "те же болты оси и дуги", "—"],
         ["Сиденье: поперечины", "900…1225 / 25", "3+3 М12 на поперечину", "съёмная пластина"],
         ["Сиденье: салазки", "≈±100 плавно", "фиксатор салазок", "—"],
         ["Опоры", "±15 плавно", "М12 + контргайка", "—"],
@@ -699,7 +700,7 @@ def sheet_side_mount(m):
     dim(ax, (-285, SIDE_CUP_Z[0]), (-(SIDE_CUP_YC + 25), SIDE_CUP_Z[0]), -40, axis="x")
     note(ax, (-(SIDE_CUP_YC + 25), 250), (-560, 300), "стакан 50×50×3,\n8 отв. Ø13 (труборез)")
     note(ax, (-SIDE_CUP_YC, cfg.zp - 60), (-560, cfg.zp + 60), "сплошной квадрат 40×40,\n2 болта М12×90")
-    note(ax, (-297, 175), (-250, 330), "фланцы 100×72×8,\n4 болта М12×45")
+    note(ax, (-297, 175), (-250, 330), "фланцы 116×72×8,\n4 болта М12×40")
     ax.set_xlim(-600, -150); ax.set_ylim(-10, cfg.zp + 120)
     fig.text(0.74, 0.92, "Почему так", fontsize=10, weight="bold", va="top")
     fig.text(0.74, 0.895,
@@ -725,7 +726,7 @@ def sheet_side_mount(m):
     ax = fig.add_axes([0.02, 0.11, 0.66, 0.16]); ax.axis("off")
     data = [["Положение по X", "вместе с сиденьем: 900…950 + салазки", "поперечина на гребне, 3+3 болта"],
             ["Высота платформы", "380…480, шаг 25 (5 положений)", "2 болта М12×90, круглые отверстия"],
-            ["Сторона", "справа / слева", "4 болта М12×45 во фланцах"],
+            ["Сторона / поперечина", "справа / слева; передняя или задняя", "4 болта М12×40 во фланцах"],
             ["Нагрузка (допущение)", "ручник 500 Н, шифтер 200 Н", "[!] уточнить по устройству"]]
     t = ax.table(cellText=data, colLabels=["Регулировка", "Диапазон", "Фиксация"], loc="upper left", cellLoc="left",
                  colWidths=[0.22, 0.4, 0.38])
@@ -745,7 +746,7 @@ def sheet_ergo():
         best, n_ok = ERG.search(man)
         fits[nm] = best
         cfg = Config(nm, H=float(best["H"]), d=float(best["d"]), xp=float(best["xp"]), alpha=float(best["alpha"]),
-                     xc1=float(best["xc1"]), xc2=float(best["xc1"]) + 275, slide=float(best["slide"]))
+                     xc1=float(best["xc1"]), xc2=float(best["xc1"]) + 275, slide=float(best["slide"]), pz=float(best["pz"]))
         m = build_model(cfg)
         ax = axes(fig, r, f"{nm}: найдено подходящих комбинаций — {n_ok}")
         lines(ax, [p for p in m.parts if not p.ref], "side", lw=0.35, color="0.45")
@@ -764,8 +765,8 @@ def sheet_ergo():
         ax.text(knee[0], knee[1] + 60, f"колено {best['knee']:.0f}°", fontsize=7, ha="center")
         ax.text(hip[0] + 20, hip[1] - 40, f"таз {best['hip']:.0f}°", fontsize=7)
         ax.text(sh[0] - 300, sh[1] + 30, f"локоть ≈{best['elbow']:.0f}°", fontsize=7)
-        ax.set_xlim(-100, 1600); ax.set_ylim(-20, 1100)
-        rows.append([nm, f"{best['H']:.0f}", f"{best['d']:+.1f}", f"{best['xp']:.0f}/{best['alpha']:.0f}°",
+        ax.set_xlim(-100, BASE_L + 300); ax.set_ylim(-20, 1150)
+        rows.append([nm, f"{best['H']:.0f}", f"{best['d']:+.1f}", f"{best['xp']:.0f}/{best['alpha']:.0f}°/Z{best['pz']:.0f}",
                      f"{best['xc1']:.0f}/{best['xc1']+275:.0f}", f"{best['slide']:+.0f}",
                      f"{best['knee']:.0f}/{best['hip']:.0f}/{best['elbow']:.0f}",
                      f"{best['clear']:.0f} ({best['clear_to']})", f"{best['entry_gap']:.0f}"])
@@ -791,9 +792,9 @@ def renders_extremes():
     """Отдельные 3D-изображения крайних положений высоты и вылета руля."""
     d3 = os.path.join(OUTD, "3d")
     os.makedirs(d3, exist_ok=True)
-    items = [("nominal", "Номинал: H=650, d=0")] + [
-        (n, t) for n, t in (("wheel_low_fwd", "Низ + вперёд: H=575, d=−75"), ("wheel_low_back", "Низ + назад: H=575, d=+75"),
-                            ("wheel_high_fwd", "Верх + вперёд: H=725, d=−75"), ("wheel_high_back", "Верх + назад: H=725, d=+75"))]
+    items = [("nominal", f"Номинал: H={H_NOM:.0f}, d=0")] + [
+        (n, t) for n, t in (("wheel_low_fwd", f"Низ + вперёд: H={H_MIN:.0f}, d=−75"), ("wheel_low_back", f"Низ + назад: H={H_MIN:.0f}, d=+75"),
+                            ("wheel_high_fwd", f"Верх + вперёд: H={H_MAX:.0f}, d=−75"), ("wheel_high_back", f"Верх + назад: H={H_MAX:.0f}, d=+75"))]
     for n, t in items:
         m = build_model(CONFIGS[n])
         fig = plt.figure(figsize=(14, 7.5))
@@ -803,7 +804,7 @@ def renders_extremes():
         ax2.axhline(H, color="#c04000", lw=0.6, ls="--")
         ax2.text(-60, H + 8, f"верх площадки {H:.0f}", color="#c04000", fontsize=9)
         ax2.axvline(POST_X, color="0.5", lw=0.5, ls=":")
-        ax2.text(POST_X + 5, 40, "ось стоек X=550", color="0.4", fontsize=8)
+        ax2.text(POST_X + 5, 40, f"ось стоек X={POST_X:.0f}", color="0.4", fontsize=8)
         x0 = DECK_X0_NOM + d
         ax2.annotate("", xy=(x0, H + 25), xytext=(DECK_X0_NOM, H + 25),
                      arrowprops=dict(arrowstyle="->", color="#0050c0", lw=1.2)) if d else None

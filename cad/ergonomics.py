@@ -39,10 +39,10 @@ def h_point(xc1, slide):
     return np.array([xs0 + 265.0, SEAT_ZC + 95.0])
 
 
-def heel_point(xp, alpha):
+def heel_point(xp, alpha, pz=PEDAL_PIVOT_Z):
     a = math.radians(alpha)
     u, w = 45.0, 31.0 + 15.0       # пятка на листе + условная высота основания педалей
-    return np.array([xp - u * math.cos(a) + w * math.sin(a), PEDAL_PIVOT_Z + u * math.sin(a) + w * math.cos(a)])
+    return np.array([xp - u * math.cos(a) + w * math.sin(a), pz + u * math.sin(a) + w * math.cos(a)])
 
 
 def rim_center(H, d):
@@ -100,9 +100,9 @@ def leg_clearance(hip, knee, heel, obst):
     return best
 
 
-def evaluate(man, H, d, xp, alpha, xc1, slide):
+def evaluate(man, H, d, xp, alpha, xc1, slide, pz=PEDAL_PIVOT_Z):
     hip = h_point(xc1, slide)
-    heel = heel_point(xp, alpha)
+    heel = heel_point(xp, alpha, pz)
     knee = knee_point(hip, heel, man["thigh"], man["shin"])
     if knee is None:
         return None
@@ -116,7 +116,7 @@ def evaluate(man, H, d, xp, alpha, xc1, slide):
         return None
     elbow = math.degrees(math.acos((man["upper"] ** 2 + man["fore"] ** 2 - reach ** 2) / (2 * man["upper"] * man["fore"])))
     torso_pt = hip + np.array([math.sin(rec), math.cos(rec)]) * 100
-    res = dict(H=H, d=d, xp=xp, alpha=alpha, xc1=xc1, slide=slide,
+    res = dict(H=H, d=d, xp=xp, alpha=alpha, xc1=xc1, slide=slide, pz=pz,
                knee=angle(hip, knee, heel), hip=angle(torso_pt, hip, knee), elbow=elbow,
                hip_pt=hip, knee_pt=knee, heel_pt=heel, sh_pt=sh2, rim=rc)
     cl, what = leg_clearance(hip, knee, heel, obstacles(H, d))
@@ -130,7 +130,7 @@ def grid():
     ds = np.arange(D_MIN, D_MAX + 0.1, D_STEP)
     xc1s = [x for x in SEAT_XC if x + 275 <= SEAT_XC[-1]][:5]
     slides = np.arange(-100, 100.1, 25)
-    return itertools.product(Hs, ds, PEDAL_XP, PEDAL_ANGLES, xc1s, slides)
+    return itertools.product(Hs, ds, PEDAL_XP, PEDAL_ANGLES, xc1s, slides, PEDAL_PZ)
 
 
 def in_range(v, rng):
@@ -162,5 +162,6 @@ if __name__ == "__main__":
     for nm, man in MANNEQUINS.items():
         b, n = search(man)
         print(nm, n, {k: (round(v, 1) if isinstance(v, float) else v) for k, v in b.items() if not k.endswith("_pt")})
-    r = evaluate(MANNEQUINS["P50_муж"], H_NOM, 0, 335, 40, 925, 0)
-    print("nominal P50", {k: v for k, v in r.items() if not k.endswith("_pt")})
+    c = Config()
+    r = evaluate(MANNEQUINS["P50_муж"], c.H, c.d, c.xp, c.alpha, c.xc1, c.slide, c.pz)
+    print("nominal P50", None if r is None else {k: v for k, v in r.items() if not k.endswith("_pt")})

@@ -2,417 +2,433 @@
  "nominal": {
   "cfg": {
    "name": "nominal",
-   "H": 650.0,
+   "H": 700.0,
    "d": 0.0,
-   "xp": 285.0,
+   "xp": 385.0,
+   "pz": 120.0,
    "alpha": 30.0,
-   "xc1": 925.0,
-   "xc2": 1200.0,
+   "xc1": 1025.0,
+   "xc2": 1300.0,
    "slide": 0.0,
    "show_refs": true,
    "side": 1,
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 181,
+  "n_parts": 188,
   "interference": [],
   "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
   "bolts_removable_ok": 36,
   "bolts_blocked": [],
   "inner_hole_z": [
-   232.0,
-   307.0
+   278.0,
+   353.0
   ]
  },
  "wheel_low_fwd": {
   "cfg": {
    "name": "wheel_low_fwd",
-   "H": 575,
-   "d": -75,
-   "xp": 285.0,
+   "H": 625.0,
+   "d": -75.0,
+   "xp": 385.0,
+   "pz": 120.0,
    "alpha": 30.0,
-   "xc1": 925.0,
-   "xc2": 1200.0,
+   "xc1": 1025.0,
+   "xc2": 1300.0,
    "slide": 0.0,
    "show_refs": true,
    "side": 1,
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 181,
+  "n_parts": 188,
   "interference": [],
   "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
   "bolts_removable_ok": 36,
   "bolts_blocked": [],
   "inner_hole_z": [
-   157.0,
-   232.0
+   203.0,
+   278.0
   ]
  },
  "wheel_low_back": {
   "cfg": {
    "name": "wheel_low_back",
-   "H": 575,
-   "d": 75,
-   "xp": 285.0,
+   "H": 625.0,
+   "d": 75.0,
+   "xp": 385.0,
+   "pz": 120.0,
    "alpha": 30.0,
-   "xc1": 925.0,
-   "xc2": 1200.0,
+   "xc1": 1025.0,
+   "xc2": 1300.0,
    "slide": 0.0,
    "show_refs": true,
    "side": 1,
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 181,
+  "n_parts": 188,
   "interference": [],
   "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
   "bolts_removable_ok": 36,
   "bolts_blocked": [],
   "inner_hole_z": [
-   157.0,
-   232.0
+   203.0,
+   278.0
   ]
  },
  "wheel_high_fwd": {
   "cfg": {
    "name": "wheel_high_fwd",
-   "H": 725,
-   "d": -75,
-   "xp": 285.0,
+   "H": 775.0,
+   "d": -75.0,
+   "xp": 385.0,
+   "pz": 120.0,
    "alpha": 30.0,
-   "xc1": 925.0,
-   "xc2": 1200.0,
+   "xc1": 1025.0,
+   "xc2": 1300.0,
    "slide": 0.0,
    "show_refs": true,
    "side": 1,
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 181,
+  "n_parts": 188,
   "interference": [],
   "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
   "bolts_removable_ok": 36,
   "bolts_blocked": [],
   "inner_hole_z": [
-   307.0,
-   382.0
+   353.0,
+   428.0
   ]
  },
  "wheel_high_back": {
   "cfg": {
    "name": "wheel_high_back",
-   "H": 725,
-   "d": 75,
-   "xp": 285.0,
+   "H": 775.0,
+   "d": 75.0,
+   "xp": 385.0,
+   "pz": 120.0,
    "alpha": 30.0,
-   "xc1": 925.0,
-   "xc2": 1200.0,
+   "xc1": 1025.0,
+   "xc2": 1300.0,
    "slide": 0.0,
    "show_refs": true,
    "side": 1,
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 181,
+  "n_parts": 188,
   "interference": [],
   "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
   "bolts_removable_ok": 36,
   "bolts_blocked": [],
   "inner_hole_z": [
-   307.0,
-   382.0
+   353.0,
+   428.0
   ]
  },
  "pedals_front_flat": {
   "cfg": {
    "name": "pedals_front_flat",
-   "H": 650.0,
+   "H": 700.0,
    "d": 0.0,
-   "xp": 260,
+   "xp": 260.0,
+   "pz": 120.0,
    "alpha": 20,
-   "xc1": 925.0,
-   "xc2": 1200.0,
+   "xc1": 1025.0,
+   "xc2": 1300.0,
    "slide": 0.0,
    "show_refs": true,
    "side": 1,
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 181,
+  "n_parts": 188,
   "interference": [],
   "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
   "bolts_removable_ok": 36,
   "bolts_blocked": [],
   "inner_hole_z": [
-   232.0,
-   307.0
+   278.0,
+   353.0
   ]
  },
- "pedals_front_steep": {
+ "pedals_front_steep_high": {
   "cfg": {
-   "name": "pedals_front_steep",
-   "H": 650.0,
+   "name": "pedals_front_steep_high",
+   "H": 700.0,
    "d": 0.0,
-   "xp": 260,
+   "xp": 260.0,
+   "pz": 170.0,
    "alpha": 60,
-   "xc1": 925.0,
-   "xc2": 1200.0,
+   "xc1": 1025.0,
+   "xc2": 1300.0,
    "slide": 0.0,
    "show_refs": true,
    "side": 1,
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 181,
+  "n_parts": 188,
   "interference": [],
   "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
   "bolts_removable_ok": 36,
   "bolts_blocked": [],
   "inner_hole_z": [
-   232.0,
-   307.0
+   278.0,
+   353.0
   ]
  },
- "pedals_rear_flat": {
+ "pedals_rear_flat_high": {
   "cfg": {
-   "name": "pedals_rear_flat",
-   "H": 650.0,
+   "name": "pedals_rear_flat_high",
+   "H": 700.0,
    "d": 0.0,
-   "xp": 385,
+   "xp": 485.0,
+   "pz": 170.0,
    "alpha": 20,
-   "xc1": 925.0,
-   "xc2": 1200.0,
+   "xc1": 1025.0,
+   "xc2": 1300.0,
    "slide": 0.0,
    "show_refs": true,
    "side": 1,
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 181,
+  "n_parts": 188,
   "interference": [],
   "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
   "bolts_removable_ok": 36,
   "bolts_blocked": [],
   "inner_hole_z": [
-   232.0,
-   307.0
+   278.0,
+   353.0
   ]
  },
  "pedals_rear_steep": {
   "cfg": {
    "name": "pedals_rear_steep",
-   "H": 650.0,
+   "H": 700.0,
    "d": 0.0,
-   "xp": 385,
+   "xp": 485.0,
+   "pz": 120.0,
    "alpha": 60,
-   "xc1": 925.0,
-   "xc2": 1200.0,
+   "xc1": 1025.0,
+   "xc2": 1300.0,
    "slide": 0.0,
    "show_refs": true,
    "side": 1,
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 181,
+  "n_parts": 188,
   "interference": [],
   "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
   "bolts_removable_ok": 36,
   "bolts_blocked": [],
   "inner_hole_z": [
-   232.0,
-   307.0
+   278.0,
+   353.0
   ]
  },
  "seat_front": {
   "cfg": {
    "name": "seat_front",
-   "H": 650.0,
+   "H": 700.0,
    "d": 0.0,
-   "xp": 285.0,
+   "xp": 385.0,
+   "pz": 120.0,
    "alpha": 30.0,
-   "xc1": 900,
-   "xc2": 1175,
+   "xc1": 1000.0,
+   "xc2": 1275.0,
    "slide": 0.0,
    "show_refs": true,
    "side": 1,
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 181,
+  "n_parts": 188,
   "interference": [],
   "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
   "bolts_removable_ok": 36,
   "bolts_blocked": [],
   "inner_hole_z": [
-   232.0,
-   307.0
+   278.0,
+   353.0
   ]
  },
  "seat_rear": {
   "cfg": {
    "name": "seat_rear",
-   "H": 650.0,
+   "H": 700.0,
    "d": 0.0,
-   "xp": 285.0,
+   "xp": 385.0,
+   "pz": 120.0,
    "alpha": 30.0,
-   "xc1": 950,
-   "xc2": 1225,
+   "xc1": 1050.0,
+   "xc2": 1325.0,
    "slide": 0.0,
    "show_refs": true,
    "side": 1,
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 181,
+  "n_parts": 188,
   "interference": [],
   "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
   "bolts_removable_ok": 36,
   "bolts_blocked": [],
   "inner_hole_z": [
-   232.0,
-   307.0
+   278.0,
+   353.0
   ]
  },
  "shifter_low_front": {
   "cfg": {
    "name": "shifter_low_front",
-   "H": 650.0,
+   "H": 700.0,
    "d": 0.0,
-   "xp": 285.0,
+   "xp": 385.0,
+   "pz": 120.0,
    "alpha": 30.0,
-   "xc1": 900,
-   "xc2": 1175,
+   "xc1": 1000.0,
+   "xc2": 1275.0,
    "slide": -100,
    "show_refs": true,
    "side": 1,
-   "zp": 380,
+   "zp": 380.0,
    "front_mount": false
   },
-  "n_parts": 181,
+  "n_parts": 188,
   "interference": [],
   "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
   "bolts_removable_ok": 36,
   "bolts_blocked": [],
   "inner_hole_z": [
-   232.0,
-   307.0
+   278.0,
+   353.0
   ]
  },
  "shifter_high_rear": {
   "cfg": {
    "name": "shifter_high_rear",
-   "H": 650.0,
+   "H": 700.0,
    "d": 0.0,
-   "xp": 285.0,
+   "xp": 385.0,
+   "pz": 120.0,
    "alpha": 30.0,
-   "xc1": 950,
-   "xc2": 1225,
+   "xc1": 1050.0,
+   "xc2": 1325.0,
    "slide": 100,
    "show_refs": true,
    "side": 1,
-   "zp": 480,
+   "zp": 480.0,
    "front_mount": false
   },
-  "n_parts": 181,
+  "n_parts": 188,
   "interference": [],
   "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
   "bolts_removable_ok": 36,
   "bolts_blocked": [],
   "inner_hole_z": [
-   232.0,
-   307.0
+   278.0,
+   353.0
   ]
  },
  "shifter_left": {
   "cfg": {
    "name": "shifter_left",
-   "H": 650.0,
+   "H": 700.0,
    "d": 0.0,
-   "xp": 285.0,
+   "xp": 385.0,
+   "pz": 120.0,
    "alpha": 30.0,
-   "xc1": 925.0,
-   "xc2": 1200.0,
+   "xc1": 1025.0,
+   "xc2": 1300.0,
    "slide": 0.0,
    "show_refs": true,
    "side": -1,
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 181,
+  "n_parts": 188,
   "interference": [],
   "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
   "bolts_removable_ok": 36,
   "bolts_blocked": [],
   "inner_hole_z": [
-   232.0,
-   307.0
+   278.0,
+   353.0
   ]
  },
  "deck_front_mount_low_back": {
   "cfg": {
    "name": "deck_front_mount_low_back",
-   "H": 575,
-   "d": 75,
-   "xp": 285.0,
+   "H": 625.0,
+   "d": 75.0,
+   "xp": 385.0,
+   "pz": 120.0,
    "alpha": 30.0,
-   "xc1": 925.0,
-   "xc2": 1200.0,
+   "xc1": 1025.0,
+   "xc2": 1300.0,
    "slide": 0.0,
    "show_refs": true,
    "side": 1,
    "zp": 430.0,
    "front_mount": true
   },
-  "n_parts": 193,
+  "n_parts": 200,
   "interference": [],
   "nuts_on_bolts_ok": 40,
   "nuts_not_on_bolt": [],
   "bolts_removable_ok": 40,
   "bolts_blocked": [],
   "inner_hole_z": [
-   157.0,
-   232.0
+   203.0,
+   278.0
   ]
  },
  "deck_front_mount_high_fwd": {
   "cfg": {
    "name": "deck_front_mount_high_fwd",
-   "H": 725,
-   "d": -75,
-   "xp": 285.0,
+   "H": 775.0,
+   "d": -75.0,
+   "xp": 385.0,
+   "pz": 120.0,
    "alpha": 30.0,
-   "xc1": 925.0,
-   "xc2": 1200.0,
+   "xc1": 1025.0,
+   "xc2": 1300.0,
    "slide": 0.0,
    "show_refs": true,
    "side": 1,
    "zp": 430.0,
    "front_mount": true
   },
-  "n_parts": 193,
+  "n_parts": 200,
   "interference": [],
   "nuts_on_bolts_ok": 40,
   "nuts_not_on_bolt": [],
   "bolts_removable_ok": 40,
   "bolts_blocked": [],
   "inner_hole_z": [
-   307.0,
-   382.0
+   353.0,
+   428.0
   ]
  }
 }
