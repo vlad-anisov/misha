@@ -14,10 +14,12 @@
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 167,
+  "n_parts": 181,
   "interference": [],
-  "nuts_on_bolts_ok": 32,
+  "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
+  "bolts_removable_ok": 36,
+  "bolts_blocked": [],
   "inner_hole_z": [
    232.0,
    307.0
@@ -38,10 +40,12 @@
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 167,
+  "n_parts": 181,
   "interference": [],
-  "nuts_on_bolts_ok": 32,
+  "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
+  "bolts_removable_ok": 36,
+  "bolts_blocked": [],
   "inner_hole_z": [
    157.0,
    232.0
@@ -62,10 +66,12 @@
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 167,
+  "n_parts": 181,
   "interference": [],
-  "nuts_on_bolts_ok": 32,
+  "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
+  "bolts_removable_ok": 36,
+  "bolts_blocked": [],
   "inner_hole_z": [
    157.0,
    232.0
@@ -86,10 +92,12 @@
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 167,
+  "n_parts": 181,
   "interference": [],
-  "nuts_on_bolts_ok": 32,
+  "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
+  "bolts_removable_ok": 36,
+  "bolts_blocked": [],
   "inner_hole_z": [
    307.0,
    382.0
@@ -110,10 +118,12 @@
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 167,
+  "n_parts": 181,
   "interference": [],
-  "nuts_on_bolts_ok": 32,
+  "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
+  "bolts_removable_ok": 36,
+  "bolts_blocked": [],
   "inner_hole_z": [
    307.0,
    382.0
@@ -134,10 +144,12 @@
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 167,
+  "n_parts": 181,
   "interference": [],
-  "nuts_on_bolts_ok": 32,
+  "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
+  "bolts_removable_ok": 36,
+  "bolts_blocked": [],
   "inner_hole_z": [
    232.0,
    307.0
@@ -158,10 +170,12 @@
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 167,
+  "n_parts": 181,
   "interference": [],
-  "nuts_on_bolts_ok": 32,
+  "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
+  "bolts_removable_ok": 36,
+  "bolts_blocked": [],
   "inner_hole_z": [
    232.0,
    307.0
@@ -182,10 +196,12 @@
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 167,
+  "n_parts": 181,
   "interference": [],
-  "nuts_on_bolts_ok": 32,
+  "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
+  "bolts_removable_ok": 36,
+  "bolts_blocked": [],
   "inner_hole_z": [
    232.0,
    307.0
@@ -206,10 +222,12 @@
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 167,
+  "n_parts": 181,
   "interference": [],
-  "nuts_on_bolts_ok": 32,
+  "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
+  "bolts_removable_ok": 36,
+  "bolts_blocked": [],
   "inner_hole_z": [
    232.0,
    307.0
@@ -222,18 +240,20 @@
    "d": 0.0,
    "xp": 285.0,
    "alpha": 30.0,
-   "xc1": 875,
-   "xc2": 1150,
+   "xc1": 900,
+   "xc2": 1175,
    "slide": 0.0,
    "show_refs": true,
    "side": 1,
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 167,
+  "n_parts": 181,
   "interference": [],
-  "nuts_on_bolts_ok": 32,
+  "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
+  "bolts_removable_ok": 36,
+  "bolts_blocked": [],
   "inner_hole_z": [
    232.0,
    307.0
@@ -246,18 +266,20 @@
    "d": 0.0,
    "xp": 285.0,
    "alpha": 30.0,
-   "xc1": 975,
-   "xc2": 1250,
+   "xc1": 950,
+   "xc2": 1225,
    "slide": 0.0,
    "show_refs": true,
    "side": 1,
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 167,
+  "n_parts": 181,
   "interference": [],
-  "nuts_on_bolts_ok": 32,
+  "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
+  "bolts_removable_ok": 36,
+  "bolts_blocked": [],
   "inner_hole_z": [
    232.0,
    307.0
@@ -270,18 +292,20 @@
    "d": 0.0,
    "xp": 285.0,
    "alpha": 30.0,
-   "xc1": 875,
-   "xc2": 1150,
+   "xc1": 900,
+   "xc2": 1175,
    "slide": -100,
    "show_refs": true,
    "side": 1,
    "zp": 380,
    "front_mount": false
   },
-  "n_parts": 167,
+  "n_parts": 181,
   "interference": [],
-  "nuts_on_bolts_ok": 32,
+  "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
+  "bolts_removable_ok": 36,
+  "bolts_blocked": [],
   "inner_hole_z": [
    232.0,
    307.0
@@ -294,18 +318,20 @@
    "d": 0.0,
    "xp": 285.0,
    "alpha": 30.0,
-   "xc1": 975,
-   "xc2": 1250,
+   "xc1": 950,
+   "xc2": 1225,
    "slide": 100,
    "show_refs": true,
    "side": 1,
    "zp": 480,
    "front_mount": false
   },
-  "n_parts": 167,
+  "n_parts": 181,
   "interference": [],
-  "nuts_on_bolts_ok": 32,
+  "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
+  "bolts_removable_ok": 36,
+  "bolts_blocked": [],
   "inner_hole_z": [
    232.0,
    307.0
@@ -326,10 +352,12 @@
    "zp": 430.0,
    "front_mount": false
   },
-  "n_parts": 167,
+  "n_parts": 181,
   "interference": [],
-  "nuts_on_bolts_ok": 32,
+  "nuts_on_bolts_ok": 36,
   "nuts_not_on_bolt": [],
+  "bolts_removable_ok": 36,
+  "bolts_blocked": [],
   "inner_hole_z": [
    232.0,
    307.0
@@ -350,10 +378,12 @@
    "zp": 430.0,
    "front_mount": true
   },
-  "n_parts": 179,
+  "n_parts": 193,
   "interference": [],
-  "nuts_on_bolts_ok": 36,
+  "nuts_on_bolts_ok": 40,
   "nuts_not_on_bolt": [],
+  "bolts_removable_ok": 40,
+  "bolts_blocked": [],
   "inner_hole_z": [
    157.0,
    232.0
@@ -374,10 +404,12 @@
    "zp": 430.0,
    "front_mount": true
   },
-  "n_parts": 179,
+  "n_parts": 193,
   "interference": [],
-  "nuts_on_bolts_ok": 36,
+  "nuts_on_bolts_ok": 40,
   "nuts_not_on_bolt": [],
+  "bolts_removable_ok": 40,
+  "bolts_blocked": [],
   "inner_hole_z": [
    307.0,
    382.0

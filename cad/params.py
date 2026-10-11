@@ -62,12 +62,12 @@ PEDAL_PIVOT_Z = 120.0
 PEDAL_XP = [260.0 + PITCH * i for i in range(6)]   # 260..385 — положение оси качания
 PEDAL_ANGLES = [20.0, 30.0, 40.0, 50.0, 60.0]     # угол площадки к горизонту, град
 PEDAL_R = (250.0,)                                 # одна дуга фиксации (+ ось = 2 болта на щеку)
-TRAY_W, TRAY_L, TRAY_T = 460.0, 330.0, 8.0
+TRAY_W, TRAY_L, TRAY_T = 450.0, 330.0, 8.0
 TRAY_FLANGE_H = 50.0
-UPRIGHT_Y0 = 231.0                                 # внутренняя грань щёк-секторов
+UPRIGHT_Y0 = 226.0                                 # внутренняя грань щёк-секторов
 
 # ------------------------------------------------------------------ сиденье
-SEAT_XC = [875.0 + PITCH * i for i in range(16)]    # 875..1250 — оси поперечин сиденья
+SEAT_XC = [900.0 + PITCH * i for i in range(14)]    # 900..1225 — оси поперечин сиденья (башмак 150, 3 болта)
 # ------------------------------------------------- боковой кронштейн шифтера / ручника
 SIDE_ARM_Y = (301.0, 380.0)  # консоль 40x40x3 от фланца поперечины до стакана
 SIDE_CUP_YC = 405.0          # ось стакана 50x50x3 (снаружи основания)
@@ -116,10 +116,10 @@ CONFIGS = {
     "pedals_front_steep": Config("pedals_front_steep", xp=260, alpha=60),
     "pedals_rear_flat": Config("pedals_rear_flat", xp=385, alpha=20),
     "pedals_rear_steep": Config("pedals_rear_steep", xp=385, alpha=60),
-    "seat_front": Config("seat_front", xc1=875, xc2=1150),
-    "seat_rear": Config("seat_rear", xc1=975, xc2=1250),
-    "shifter_low_front": Config("shifter_low_front", xc1=875, xc2=1150, zp=380, slide=-100),
-    "shifter_high_rear": Config("shifter_high_rear", xc1=975, xc2=1250, zp=480, slide=100),
+    "seat_front": Config("seat_front", xc1=900, xc2=1175),
+    "seat_rear": Config("seat_rear", xc1=950, xc2=1225),
+    "shifter_low_front": Config("shifter_low_front", xc1=900, xc2=1175, zp=380, slide=-100),
+    "shifter_high_rear": Config("shifter_high_rear", xc1=950, xc2=1225, zp=480, slide=100),
     "shifter_left": Config("shifter_left", side=-1),
     "deck_front_mount_low_back": Config("deck_front_mount_low_back", H=575, d=75, front_mount=True),
     "deck_front_mount_high_fwd": Config("deck_front_mount_high_fwd", H=725, d=-75, front_mount=True),

@@ -87,7 +87,7 @@ def plate_outline(shape):
     return outer, holes, t
 
 
-def write_dxf(path, outer, holes, label):
+def write_dxf(path, outer, holes, label, mark=None):
     doc = ezdxf.new("R2010")
     doc.units = ezdxf.units.MM
     msp = doc.modelspace()
@@ -98,6 +98,11 @@ def write_dxf(path, outer, holes, label):
         else:
             msp.add_lwpolyline([tuple(p) for p in h], close=True, dxfattribs={"layer": "CUT"})
     msp.add_text(label, height=6, dxfattribs={"layer": "TEXT"}).set_placement((0, -12))
+    if mark:   # гравировка номера позиции на детали (лазер, слой MARK, без прорезки)
+        w, h = outer.max(axis=0)
+        hh = max(4.0, min(8.0, h / 6))
+        msp.add_text(mark, height=hh, dxfattribs={"layer": "MARK"}).set_placement(
+            (w * 0.5, min(h * 0.5, h - hh - 3)), align=ezdxf.enums.TextEntityAlignment.MIDDLE_CENTER)
     doc.saveas(path)
 
 
@@ -130,7 +135,7 @@ def main():
         outer, holes, t = plate_outline(p.shape)
         pos = f"Л{i+1:02d}"
         fn = f"{pos}_{k}_t{t:.0f}.dxf"
-        write_dxf(os.path.join(FAB, "dxf", fn), outer, holes, f"{pos} {k} t={t:.0f} x{d['n']}")
+        write_dxf(os.path.join(FAB, "dxf", fn), outer, holes, f"{pos} {k} t={t:.0f} x{d['n']}", mark=pos)
         w, h = outer.max(axis=0)
         rows.append(dict(pos=pos, part=k, thickness_mm=round(t, 1), size_mm=f"{w:.0f}x{h:.0f}", holes=len(holes),
                          qty=d["n"], spec=p.spec, dxf=fn))
@@ -140,6 +145,18 @@ def main():
             ax.fill(hh[:, 0], hh[:, 1], color="white", ec="k", lw=0.4)
         ax.set_aspect("equal"); ax.axis("off")
         ax.set_title(f"{pos}  t={t:.0f}  ×{d['n']}\n{k}\n{w:.0f}×{h:.0f}, отв. {len(holes)}", fontsize=7, loc="left")
+    # кондуктор для сверловки сплошных квадратов 40x40 (не входит в раму)
+    jig_outer = np.array([[0, 0], [170, 0], [170, 40], [0, 40], [0, 0]], float)
+    jig_holes = []
+    for u in (25.0, 60.0, 100.0, 135.0):
+        ang = np.linspace(0, 2 * np.pi, 49)
+        jig_holes.append((np.array([u, 20.0]), 6.5, np.stack([u + 6.5 * np.cos(ang), 20 + 6.5 * np.sin(ang)], 1)))
+    pos = f"Л{len(rows)+1:02d}"
+    fn = f"{pos}_jig_drill_square40_t8.dxf"
+    write_dxf(os.path.join(FAB, "dxf", fn), jig_outer, jig_holes,
+              f"{pos} кондуктор: торец квадрата к краю X=0; стойки руля — отв. 60 и 135, шифтер — 25 и 100", mark=pos)
+    rows.append(dict(pos=pos, part="jig_drill_square40 (кондуктор, не в раму)", thickness_mm=8.0, size_mm="170x40",
+                     holes=4, qty=1, spec="Лист 8 мм (лазер) — кондуктор сверловки квадратов 40x40", dxf=fn))
     fig.text(0.70, 0.04, "Лазерные детали — раскладка (масштаб у каждой свой)\nDXF 1:1: fabrication/dxf/  ·  "
              "все отверстия Ø13 под М12\nКаркас автосимулятора — КОНЦЕПЦИЯ, до запуска сверить с моделью",
              fontsize=9)
