@@ -98,7 +98,6 @@ def main(names):
         m = build_model(cfg)
         hits = interference(m)
         report[n] = dict(cfg=cfg.__dict__, n_parts=len(m.parts), interference=hits,
-                         saddle_set=m.notes.get("saddle_set"),
                          inner_hole_z=m.notes.get("inner_hole_z"))
         if n == "nominal":
             export_step(m, os.path.join(OUT, "step", "simrig_nominal_AP214.step"), "AP214IS")

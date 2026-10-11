@@ -44,8 +44,8 @@ RIGID = dict(A=1e5, Iy=1e9, Iz=1e9, J=1e9, cy=1, cz=1)
 S40x3 = sec_rhs(40, 40, 3)
 S40x2 = sec_rhs(40, 40, 2)
 S50x3 = sec_rhs(50, 50, 3)
-FIN = sec_flat(DECK_FIN_T, DECK_FIN_H)                    # 10 x 60 на ребро
-DECK_X = dict(A=150 * 6 + 232, Iy=45000.0, Iz=6 * 150 ** 3 / 12, J=35000.0, cy=75, cz=20)  # полоса листа + 40x20x2
+FIN = sec_flat(DECK_FIN_T, DECK_FIN_H)                    # 8 x 50 на ребро
+DECK_X = dict(A=130 * 8, Iy=130 * 8 ** 3 / 12, Iz=8 * 130 ** 3 / 12, J=130 * 8 ** 3 / 3, cy=65, cz=4)  # полоса листа 8 мм
 
 
 class Frame:
@@ -152,10 +152,10 @@ def build_frame(H, d):
     ys = [-RAIL_YC, -DECK_FIN_Y, DECK_FIN_Y, RAIL_YC]
     f.chain([(POST_X, y, zhead) for y in ys], S40x3, "верхняя поперечина 40x40x3")
     zf = H - DECK_T - DECK_FIN_H / 2
-    xa = [POST_X + h for h in (SADDLE_HOLES_A if (d - D_MIN) % 25 == 0 else SADDLE_HOLES_B)]
+    xa = [POST_X + h for h in SADDLE_HOLES]
     x0, x1 = DECK_X0_NOM + d, DECK_X0_NOM + DECK_D + d
-    xmount = (x0 + 30, x0 + 260)            # условные точки крепления базы руля
-    xr = DECK_X0_NOM + d + 350
+    xmount = (x0 + 30, x0 + 230)            # условные точки крепления базы руля
+    xr = DECK_X0_NOM + d + RIM_FROM_DECK_FRONT
     for s in (1, -1):
         y = s * DECK_FIN_Y
         for xb in xa:
@@ -163,7 +163,7 @@ def build_frame(H, d):
         pts = sorted(set([x0, x1] + xa + list(xmount)))
         f.chain([(x, y, zf) for x in pts], FIN, "гребень площадки 60x10", ref=(0, 0, 1))
     for xm in xmount:   # лист + рёбра связывают гребни поперёк (в точках крепления базы)
-        f.chain([(xm, -DECK_FIN_Y, zf), (xm, 0, zf), (xm, DECK_FIN_Y, zf)], DECK_X, "лист площадки + ребро")
+        f.chain([(xm, -DECK_FIN_Y, zf), (xm, 0, zf), (xm, DECK_FIN_Y, zf)], DECK_X, "лист площадки 8 мм")
     rim = (xr, 0.0, H + 70)
     for xm in xmount:
         for s in (1, -1):
@@ -217,7 +217,7 @@ def bolt_checks():
     mu = 0.20
     out.append(("Сдвиг трением на болт, 2 плоскости трения, μ=0.20", f"≈{2*mu*Fp:.0f} кН"))
     # седло: момент от LC1 в крайнем заднем положении
-    lever = (DECK_X0_NOM + D_MAX + 350) - POST_X
+    lever = (DECK_X0_NOM + D_MAX + RIM_FROM_DECK_FRONT) - POST_X
     M = 1000 * lever / 1000                        # Н·м
     pair = 75.0
     Fb = M / 2 / (pair / 1000) / 1000              # кН на болт, 2 седла
@@ -225,7 +225,7 @@ def bolt_checks():
                 f"≈{Fb:.2f} кН на болт (запас по срезу > {Fv_Rd/Fb:.0f}, по трению > {2*mu*Fp/Fb:.0f})"))
     t_fin = DECK_FIN_T
     sb = Fb * 1000 / (d * t_fin)
-    out.append(("Смятие гребня 10 мм под болтом М12", f"{sb:.0f} МПа (допускаемое для S235 ≈ 2.5·360/1.25 = 720 МПа)"))
+    out.append((f"Смятие гребня {t_fin:.0f} мм под болтом М12", f"{sb:.0f} МПа (допускаемое для S235 ≈ 2.5·360/1.25 = 720 МПа)"))
     # телескоп
     Mpost = 1000 * lever / 1000 / 2
     overlap_min = OUTER_TOP - (H_MAX - STACK - INNER_L)
@@ -236,9 +236,9 @@ def bolt_checks():
     # педали
     Fped, arm = 2000.0, 200.0
     Mp = Fped * arm / 1000
-    Fs = Mp / (PEDAL_R[0] / 1000 + PEDAL_R[1] ** 2 / PEDAL_R[0] / 1000) / 2
-    out.append((f"Педали: тормоз {Fped:.0f} Н по нормали на расстоянии {arm:.0f} мм от оси → {Mp:.0f} Н·м",
-                f"болт внешней дуги ≈{Mp/2/(PEDAL_R[1]/1000)/1000*0.75:.2f} кН, оси ≈{Fped/2/1000:.1f} кН (одна плоскость; запас > 15)"))
+    Fs = Mp / 2 / (PEDAL_R[0] / 1000) / 1000
+    out.append((f"Педали: тормоз {Fped:.0f} Н по нормали на расстоянии {arm:.0f} мм от оси → {Mp:.0f} Н·м; ось + 1 болт на дуге R{PEDAL_R[0]:.0f} на каждой щеке",
+                f"болт дуги ≈{Fs:.2f} кН, оси ≈{(Fped/2/1000 + Fs):.1f} кН (одна плоскость; запас > {Fv_Rd/(Fped/2/1000 + Fs):.0f})"))
     st_I = (20 * 40 ** 3 - 16 * 36 ** 3) / 12
     Ls = 444.0
     Pm = Fped / 2
@@ -247,7 +247,7 @@ def bolt_checks():
     out.append(("Поперечина педальной площадки 40x20x2 на ребро, пролёт 444, 1000 Н в середине (без учёта листа)",
                 f"σ ≈ {sig:.0f} МПа, прогиб ≈ {dl:.2f} мм"))
     # щеки башмаков: проверка на отрыв
-    out.append(("Башмак педалей: 3 болта М12 на сторону, сдвиг 2 кН/2 стороны", "≈0.33 кН на болт — трение и опора болта с запасом > 30"))
+    out.append(("Башмак педалей: 3 болта М12 на сторону (сквозные, гайка ISO 7042), сдвиг 2 кН/2 стороны", "≈0.33 кН на болт — трение и опора болта с запасом > 30"))
     return out
 
 

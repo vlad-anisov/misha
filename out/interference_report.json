@@ -11,12 +11,11 @@
    "slide": 0.0,
    "show_refs": true
   },
-  "n_parts": 188,
+  "n_parts": 166,
   "interference": [],
-  "saddle_set": "A",
   "inner_hole_z": [
-   234.0,
-   309.0
+   232.0,
+   307.0
   ]
  },
  "wheel_low_fwd": {
@@ -31,12 +30,11 @@
    "slide": 0.0,
    "show_refs": true
   },
-  "n_parts": 188,
+  "n_parts": 166,
   "interference": [],
-  "saddle_set": "A",
   "inner_hole_z": [
-   159.0,
-   234.0
+   157.0,
+   232.0
   ]
  },
  "wheel_low_back": {
@@ -51,12 +49,11 @@
    "slide": 0.0,
    "show_refs": true
   },
-  "n_parts": 188,
+  "n_parts": 166,
   "interference": [],
-  "saddle_set": "A",
   "inner_hole_z": [
-   159.0,
-   234.0
+   157.0,
+   232.0
   ]
  },
  "wheel_high_fwd": {
@@ -71,12 +68,11 @@
    "slide": 0.0,
    "show_refs": true
   },
-  "n_parts": 188,
+  "n_parts": 166,
   "interference": [],
-  "saddle_set": "A",
   "inner_hole_z": [
-   309.0,
-   384.0
+   307.0,
+   382.0
   ]
  },
  "wheel_high_back": {
@@ -91,12 +87,11 @@
    "slide": 0.0,
    "show_refs": true
   },
-  "n_parts": 188,
+  "n_parts": 166,
   "interference": [],
-  "saddle_set": "A",
   "inner_hole_z": [
-   309.0,
-   384.0
+   307.0,
+   382.0
   ]
  },
  "pedals_front_flat": {
@@ -111,12 +106,11 @@
    "slide": 0.0,
    "show_refs": true
   },
-  "n_parts": 188,
+  "n_parts": 166,
   "interference": [],
-  "saddle_set": "A",
   "inner_hole_z": [
-   234.0,
-   309.0
+   232.0,
+   307.0
   ]
  },
  "pedals_front_steep": {
@@ -131,12 +125,11 @@
    "slide": 0.0,
    "show_refs": true
   },
-  "n_parts": 188,
+  "n_parts": 166,
   "interference": [],
-  "saddle_set": "A",
   "inner_hole_z": [
-   234.0,
-   309.0
+   232.0,
+   307.0
   ]
  },
  "pedals_rear_flat": {
@@ -151,12 +144,11 @@
    "slide": 0.0,
    "show_refs": true
   },
-  "n_parts": 188,
+  "n_parts": 166,
   "interference": [],
-  "saddle_set": "A",
   "inner_hole_z": [
-   234.0,
-   309.0
+   232.0,
+   307.0
   ]
  },
  "pedals_rear_steep": {
@@ -171,12 +163,11 @@
    "slide": 0.0,
    "show_refs": true
   },
-  "n_parts": 188,
+  "n_parts": 166,
   "interference": [],
-  "saddle_set": "A",
   "inner_hole_z": [
-   234.0,
-   309.0
+   232.0,
+   307.0
   ]
  },
  "seat_front": {
@@ -191,12 +182,11 @@
    "slide": 0.0,
    "show_refs": true
   },
-  "n_parts": 188,
+  "n_parts": 166,
   "interference": [],
-  "saddle_set": "A",
   "inner_hole_z": [
-   234.0,
-   309.0
+   232.0,
+   307.0
   ]
  },
  "seat_rear": {
@@ -211,12 +201,11 @@
    "slide": 0.0,
    "show_refs": true
   },
-  "n_parts": 188,
+  "n_parts": 166,
   "interference": [],
-  "saddle_set": "A",
   "inner_hole_z": [
-   234.0,
-   309.0
+   232.0,
+   307.0
   ]
  }
 }
